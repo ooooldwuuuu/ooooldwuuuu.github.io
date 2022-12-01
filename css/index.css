@@ -10,9 +10,29 @@
   }
 }
 
+a {
+  color: white;
+  text-decoration:none;
+}
+
 body {
-  background: rgb(0,0,0);
-background: linear-gradient(169deg, rgba(0,0,0,1) 0%, rgba(61,61,61,1) 71%, rgba(84,84,84,1) 100%);
+  background-image: url("../pic/wepik-photo-mode-2022111-1150.jpeg");
+  background-color: #cccccc;
+  background-size: 100% 100%;
+}
+
+.welcome > h1 {
+  color: #fcc200;
+  font-size: 12vmin;
+  font-family: 'Dancing Script', cursive;
+  text-shadow: 0 3px 10px #da9100; 
+}
+
+.slogan > h1 {
+  color: white;
+  font-size: 10vmin;
+  font-family: 'Dancing Script', cursive;
+  text-shadow: 0 3px 10px #fff; 
 }
 
 .info-box {
@@ -23,7 +43,8 @@ background: linear-gradient(169deg, rgba(0,0,0,1) 0%, rgba(61,61,61,1) 71%, rgba
   width: 200px;
   height: 200px;
   margin: 10px;
-  background-color: grey;
+  background: rgb(130,130,130);
+  background: linear-gradient(90deg, rgba(130,130,130,1) 0%, rgba(61,61,61,1) 100%);
 }
 
 .border-1 {
@@ -42,6 +63,17 @@ background: linear-gradient(169deg, rgba(0,0,0,1) 0%, rgba(61,61,61,1) 71%, rgba
   border-radius: 50% 40% 60% 20%;
 }
 
+.info-box > hr {
+  width: 70%;
+  height: 3px;
+  margin: 0 auto;
+  color: gold;
+  background: linear-gradient(
+    to right, 
+    gold, 
+    rgba(0, 0, 0, 0)
+  );
+}
 
 
 .info-img-box {
@@ -52,6 +84,19 @@ background: linear-gradient(169deg, rgba(0,0,0,1) 0%, rgba(61,61,61,1) 71%, rgba
   width: 200px;
   height: 400px;
   margin: 10px;
-  background-color: grey;
+  background: rgb(130,130,130);
+  background: linear-gradient(90deg, rgba(130,130,130,1) 0%, rgba(61,61,61,1) 100%);
   border-radius: 50% 20% / 10% 40%;
+}
+
+.info-img-box > hr {
+  width: 70%;
+  height: 3px;
+  margin: 7% auto;
+  color: gold;
+  background: linear-gradient(
+    to right, 
+    gold, 
+    rgba(0, 0, 0, 0)
+  );
 }
