@@ -10,10 +10,10 @@
             background-color: #f4f4f4;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* 保持在頂部，而不是居中 */
-            min-height: 100vh; /* 最小高度為100vh，但允許滾動 */
+            align-items: flex-start;
+            min-height: 100vh;
             margin: 0;
-            padding: 20px; /* 增加一些外部間距，讓內容不會貼邊 */
+            padding: 20px;
         }
         .container {
             background-color: #fff;
@@ -21,7 +21,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 350px;
-            box-sizing: border-box; /* 確保 padding 不會讓寬度超出 */
+            box-sizing: border-box;
         }
         h1 {
             text-align: center;
@@ -123,11 +123,11 @@
         <h2>剩餘額度</h2>
         <div class="result-group">
             <label>熱量 (大卡)</label>
-            <div id="remainingCals" class="result-value">2000</div>
+            <div id="remainingCals" class="result-value">1800</div>
         </div>
         <div class="result-group">
             <label>蛋白質 (克)</label>
-            <div id="remainingProtein" class="result-value">150</div>
+            <div id="remainingProtein" class="result-value">140</div>
         </div>
         <div class="result-group">
             <label>碳水化合物 (克)</label>
@@ -174,39 +174,55 @@
         const deductBtn = document.getElementById('deductBtn');
         const resetBtn = document.getElementById('resetBtn');
 
-        // 定義一個物件來儲存當前剩餘的數值
-        let remaining = {};
+        // 定義預設值
+        const defaultGoals = {
+            cals: 1800,
+            protein: 140,
+            carbs: 250,
+            fat: 60
+        };
 
-        // 設定初始值
-        function initialize() {
-            // 從輸入框取得目標值，如果沒有則使用預設值
-            const goalCals = parseFloat(goalCalsInput.value) || 0;
-            const goalProtein = parseFloat(goalProteinInput.value) || 0;
-            const goalCarbs = parseFloat(goalCarbsInput.value) || 0;
-            const goalFat = parseFloat(goalFatInput.value) || 0;
-            
-            remaining = {
-                cals: goalCals,
-                protein: goalProtein,
-                carbs: goalCarbs,
-                fat: goalFat
-            };
-            
+        // 儲存所有數值的物件
+        let values = {};
+
+        // 儲存數值到 Local Storage
+        function saveToLocalStorage() {
+            localStorage.setItem('trackerValues', JSON.stringify(values));
+        }
+
+        // 從 Local Storage 讀取數值
+        function loadFromLocalStorage() {
+            const savedValues = localStorage.getItem('trackerValues');
+            if (savedValues) {
+                values = JSON.parse(savedValues);
+                // 更新目標輸入框的數值
+                goalCalsInput.value = values.goals.cals;
+                goalProteinInput.value = values.goals.protein;
+                goalCarbsInput.value = values.goals.carbs;
+                goalFatInput.value = values.goals.fat;
+            } else {
+                // 如果沒有儲存的數值，則使用預設值
+                values = {
+                    goals: { ...defaultGoals },
+                    remaining: { ...defaultGoals }
+                };
+            }
             updateDisplay();
         }
 
         // 更新畫面上的數字和顏色
         function updateDisplay() {
-            remainingCalsDisplay.textContent = remaining.cals.toFixed(0);
-            remainingProteinDisplay.textContent = remaining.protein.toFixed(0);
-            remainingCarbsDisplay.textContent = remaining.carbs.toFixed(0);
-            remainingFatDisplay.textContent = remaining.fat.toFixed(0);
+            // 顯示為整數，如有需要顯示小數，請將 toFixed(0) 改為 toFixed(1) 或 toFixed(2)
+            remainingCalsDisplay.textContent = values.remaining.cals.toFixed(0);
+            remainingProteinDisplay.textContent = values.remaining.protein.toFixed(0);
+            remainingCarbsDisplay.textContent = values.remaining.carbs.toFixed(0);
+            remainingFatDisplay.textContent = values.remaining.fat.toFixed(0);
 
             // 根據數值正負來切換顏色
-            remainingCalsDisplay.classList.toggle('negative', remaining.cals < 0);
-            remainingProteinDisplay.classList.toggle('negative', remaining.protein < 0);
-            remainingCarbsDisplay.classList.toggle('negative', remaining.carbs < 0);
-            remainingFatDisplay.classList.toggle('negative', remaining.fat < 0);
+            remainingCalsDisplay.classList.toggle('negative', values.remaining.cals < 0);
+            remainingProteinDisplay.classList.toggle('negative', values.remaining.protein < 0);
+            remainingCarbsDisplay.classList.toggle('negative', values.remaining.carbs < 0);
+            remainingFatDisplay.classList.toggle('negative', values.remaining.fat < 0);
         }
 
         // 扣除攝取量
@@ -216,13 +232,14 @@
             const mealCarbs = parseFloat(mealCarbsInput.value) || 0;
             const mealFat = parseFloat(mealFatInput.value) || 0;
 
-            remaining.cals -= mealCals;
-            remaining.protein -= mealProtein;
-            remaining.carbs -= mealCarbs;
-            remaining.fat -= mealFat;
+            values.remaining.cals -= mealCals;
+            values.remaining.protein -= mealProtein;
+            values.remaining.carbs -= mealCarbs;
+            values.remaining.fat -= mealFat;
 
             updateDisplay();
-            
+            saveToLocalStorage(); // 扣除後儲存
+
             // 清空單餐輸入框
             mealCalsInput.value = '';
             mealProteinInput.value = '';
@@ -232,22 +249,30 @@
 
         // 重置為新的一天
         function resetDay() {
-            // 重新取得目標值並初始化
-            initialize();
+            values.remaining = { ...values.goals };
+            updateDisplay();
+            saveToLocalStorage(); // 重置後儲存
         }
 
-        // 監聽按鈕點擊事件
+        // 監聽目標值輸入框的變化
+        function updateGoals() {
+            values.goals.cals = parseFloat(goalCalsInput.value) || 0;
+            values.goals.protein = parseFloat(goalProteinInput.value) || 0;
+            values.goals.carbs = parseFloat(goalCarbsInput.value) || 0;
+            values.goals.fat = parseFloat(goalFatInput.value) || 0;
+            saveToLocalStorage(); // 目標改變時也儲存
+        }
+
+        // 監聽事件
         deductBtn.addEventListener('click', deductValues);
         resetBtn.addEventListener('click', resetDay);
+        goalCalsInput.addEventListener('change', updateGoals);
+        goalProteinInput.addEventListener('change', updateGoals);
+        goalCarbsInput.addEventListener('change', updateGoals);
+        goalFatInput.addEventListener('change', updateGoals);
 
-        // 監聽目標值輸入框的變化，即時更新
-        goalCalsInput.addEventListener('change', initialize);
-        goalProteinInput.addEventListener('change', initialize);
-        goalCarbsInput.addEventListener('change', initialize);
-        goalFatInput.addEventListener('change', initialize);
-
-        // 網頁載入時先執行一次初始化
-        document.addEventListener('DOMContentLoaded', initialize);
+        // 網頁載入時先從 Local Storage 讀取數值
+        document.addEventListener('DOMContentLoaded', loadFromLocalStorage);
     </script>
 
 </body>
