@@ -10,10 +10,10 @@
             background-color: #f4f4f4;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* 保持在頂部，而不是居中 */
-            min-height: 100vh; /* 最小高度為100vh，但允許滾動 */
+            align-items: flex-start;
+            min-height: 100vh;
             margin: 0;
-            padding: 20px; /* 增加一些外部間距，讓內容不會貼邊 */
+            padding: 20px;
         }
         .container {
             background-color: #fff;
@@ -21,7 +21,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 350px;
-            box-sizing: border-box; /* 確保 padding 不會讓寬度超出 */
+            box-sizing: border-box;
         }
         h1 {
             text-align: center;
@@ -58,11 +58,11 @@
             padding: 10px;
             background-color: #e9e9e9;
             border-radius: 5px;
-            color: #007BFF; /* 初始藍色 */
+            color: #007BFF;
             text-align: center;
         }
         .negative {
-            color: #dc3545 !important; /* 小於零時變紅色 */
+            color: #dc3545 !important;
         }
         .meal-input-group {
             display: flex;
@@ -94,6 +94,33 @@
         button#resetBtn {
             background-color: #28a745;
         }
+        .autocomplete-container {
+            position: relative;
+            margin-bottom: 10px; /* 為自動建議清單留出空間 */
+        }
+        .autocomplete-list {
+            position: absolute;
+            z-index: 10;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-top: none;
+            max-height: 150px;
+            overflow-y: auto;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .autocomplete-item:hover {
+            background-color: #e9e9e9;
+        }
     </style>
 </head>
 <body>
@@ -123,11 +150,11 @@
         <h2>剩餘額度</h2>
         <div class="result-group">
             <label>熱量 (大卡)</label>
-            <div id="remainingCals" class="result-value">2000</div>
+            <div id="remainingCals" class="result-value">1800</div>
         </div>
         <div class="result-group">
             <label>蛋白質 (克)</label>
-            <div id="remainingProtein" class="result-value">150</div>
+            <div id="remainingProtein" class="result-value">140</div>
         </div>
         <div class="result-group">
             <label>碳水化合物 (克)</label>
@@ -141,6 +168,11 @@
         <hr>
 
         <h2>單餐攝取</h2>
+        <div class="autocomplete-container">
+            <label for="mealName">品項名稱</label>
+            <input type="text" id="mealName" placeholder="例如：雞胸肉">
+            <ul id="autocompleteList" class="autocomplete-list" style="display:none;"></ul>
+        </div>
         <div class="meal-input-group">
             <input type="number" id="mealCals" placeholder="熱量">
             <input type="number" id="mealProtein" placeholder="蛋白">
@@ -166,64 +198,104 @@
         const remainingCarbsDisplay = document.getElementById('remainingCarbs');
         const remainingFatDisplay = document.getElementById('remainingFat');
 
+        const mealNameInput = document.getElementById('mealName');
         const mealCalsInput = document.getElementById('mealCals');
         const mealProteinInput = document.getElementById('mealProtein');
         const mealCarbsInput = document.getElementById('mealCarbs');
         const mealFatInput = document.getElementById('mealFat');
+        const autocompleteList = document.getElementById('autocompleteList');
 
         const deductBtn = document.getElementById('deductBtn');
         const resetBtn = document.getElementById('resetBtn');
 
-        // 定義一個物件來儲存當前剩餘的數值
-        let remaining = {};
+        // 定義預設值
+        const defaultGoals = {
+            cals: 1800,
+            protein: 140,
+            carbs: 250,
+            fat: 60
+        };
 
-        // 設定初始值
-        function initialize() {
-            // 從輸入框取得目標值，如果沒有則使用預設值
-            const goalCals = parseFloat(goalCalsInput.value) || 0;
-            const goalProtein = parseFloat(goalProteinInput.value) || 0;
-            const goalCarbs = parseFloat(goalCarbsInput.value) || 0;
-            const goalFat = parseFloat(goalFatInput.value) || 0;
+        // 儲存所有數值的物件
+        let values = {};
+        let foodDatabase = []; // 新增：用來儲存所有食物紀錄的陣列
+
+        // 儲存數值到 Local Storage
+        function saveToLocalStorage() {
+            localStorage.setItem('trackerValues', JSON.stringify(values));
+            localStorage.setItem('foodDatabase', JSON.stringify(foodDatabase)); // 新增：儲存食物資料庫
+        }
+
+        // 從 Local Storage 讀取數值
+        function loadFromLocalStorage() {
+            const savedValues = localStorage.getItem('trackerValues');
+            if (savedValues) {
+                values = JSON.parse(savedValues);
+                goalCalsInput.value = values.goals.cals;
+                goalProteinInput.value = values.goals.protein;
+                goalCarbsInput.value = values.goals.carbs;
+                goalFatInput.value = values.goals.fat;
+            } else {
+                values = {
+                    goals: { ...defaultGoals },
+                    remaining: { ...defaultGoals }
+                };
+            }
             
-            remaining = {
-                cals: goalCals,
-                protein: goalProtein,
-                carbs: goalCarbs,
-                fat: goalFat
-            };
-            
+            // 讀取食物資料庫
+            const savedFoodDb = localStorage.getItem('foodDatabase');
+            if (savedFoodDb) {
+                foodDatabase = JSON.parse(savedFoodDb);
+            }
+
             updateDisplay();
         }
 
         // 更新畫面上的數字和顏色
         function updateDisplay() {
-            remainingCalsDisplay.textContent = remaining.cals.toFixed(0);
-            remainingProteinDisplay.textContent = remaining.protein.toFixed(0);
-            remainingCarbsDisplay.textContent = remaining.carbs.toFixed(0);
-            remainingFatDisplay.textContent = remaining.fat.toFixed(0);
+            remainingCalsDisplay.textContent = values.remaining.cals.toFixed(0);
+            remainingProteinDisplay.textContent = values.remaining.protein.toFixed(0);
+            remainingCarbsDisplay.textContent = values.remaining.carbs.toFixed(0);
+            remainingFatDisplay.textContent = values.remaining.fat.toFixed(0);
 
-            // 根據數值正負來切換顏色
-            remainingCalsDisplay.classList.toggle('negative', remaining.cals < 0);
-            remainingProteinDisplay.classList.toggle('negative', remaining.protein < 0);
-            remainingCarbsDisplay.classList.toggle('negative', remaining.carbs < 0);
-            remainingFatDisplay.classList.toggle('negative', remaining.fat < 0);
+            remainingCalsDisplay.classList.toggle('negative', values.remaining.cals < 0);
+            remainingProteinDisplay.classList.toggle('negative', values.remaining.protein < 0);
+            remainingCarbsDisplay.classList.toggle('negative', values.remaining.carbs < 0);
+            remainingFatDisplay.classList.toggle('negative', values.remaining.fat < 0);
         }
 
         // 扣除攝取量
         function deductValues() {
+            const mealName = mealNameInput.value.trim();
             const mealCals = parseFloat(mealCalsInput.value) || 0;
             const mealProtein = parseFloat(mealProteinInput.value) || 0;
             const mealCarbs = parseFloat(mealCarbsInput.value) || 0;
             const mealFat = parseFloat(mealFatInput.value) || 0;
 
-            remaining.cals -= mealCals;
-            remaining.protein -= mealProtein;
-            remaining.carbs -= mealCarbs;
-            remaining.fat -= mealFat;
+            // 檢查是否是新食物，如果是則加入資料庫
+            if (mealName && mealCals + mealProtein + mealCarbs + mealFat > 0) {
+                const existingFood = foodDatabase.find(food => food.name === mealName);
+                if (!existingFood) {
+                    foodDatabase.push({
+                        name: mealName,
+                        cals: mealCals,
+                        protein: mealProtein,
+                        carbs: mealCarbs,
+                        fat: mealFat
+                    });
+                }
+            }
+
+            values.remaining.cals -= mealCals;
+            values.remaining.protein -= mealProtein;
+            values.remaining.carbs -= mealCarbs;
+            values.remaining.fat -= mealFat;
 
             updateDisplay();
-            
+            saveToLocalStorage(); // 扣除後儲存
+
             // 清空單餐輸入框
+            mealNameInput.value = '';
             mealCalsInput.value = '';
             mealProteinInput.value = '';
             mealCarbsInput.value = '';
@@ -232,23 +304,72 @@
 
         // 重置為新的一天
         function resetDay() {
-            // 重新取得目標值並初始化
-            initialize();
+            values.remaining = { ...values.goals };
+            updateDisplay();
+            saveToLocalStorage(); // 重置後儲存
         }
 
-        // 監聽按鈕點擊事件
+        // 監聽目標值輸入框的變化
+        function updateGoals() {
+            values.goals.cals = parseFloat(goalCalsInput.value) || 0;
+            values.goals.protein = parseFloat(goalProteinInput.value) || 0;
+            values.goals.carbs = parseFloat(goalCarbsInput.value) || 0;
+            values.goals.fat = parseFloat(goalFatInput.value) || 0;
+            saveToLocalStorage(); // 目標改變時也儲存
+        }
+
+        // 顯示自動建議清單
+        function showAutocomplete(query) {
+            autocompleteList.innerHTML = ''; // 清空舊的建議
+            autocompleteList.style.display = 'none';
+
+            if (query.length < 1) return;
+
+            const matches = foodDatabase.filter(food =>
+                food.name.toLowerCase().includes(query.toLowerCase())
+            );
+
+            if (matches.length > 0) {
+                matches.forEach(food => {
+                    const li = document.createElement('li');
+                    li.textContent = food.name;
+                    li.classList.add('autocomplete-item');
+                    li.addEventListener('click', () => {
+                        mealNameInput.value = food.name;
+                        mealCalsInput.value = food.cals;
+                        mealProteinInput.value = food.protein;
+                        mealCarbsInput.value = food.carbs;
+                        mealFatInput.value = food.fat;
+                        autocompleteList.style.display = 'none';
+                    });
+                    autocompleteList.appendChild(li);
+                });
+                autocompleteList.style.display = 'block';
+            }
+        }
+
+        // 監聽事件
         deductBtn.addEventListener('click', deductValues);
         resetBtn.addEventListener('click', resetDay);
+        goalCalsInput.addEventListener('change', updateGoals);
+        goalProteinInput.addEventListener('change', updateGoals);
+        goalCarbsInput.addEventListener('change', updateGoals);
+        goalFatInput.addEventListener('change', updateGoals);
 
-        // 監聽目標值輸入框的變化，即時更新
-        goalCalsInput.addEventListener('change', initialize);
-        goalProteinInput.addEventListener('change', initialize);
-        goalCarbsInput.addEventListener('change', initialize);
-        goalFatInput.addEventListener('change', initialize);
+        // 監聽品項名稱輸入框的輸入
+        mealNameInput.addEventListener('input', (e) => {
+            showAutocomplete(e.target.value);
+        });
 
-        // 網頁載入時先執行一次初始化
-        document.addEventListener('DOMContentLoaded', initialize);
+        // 點擊頁面其他地方時隱藏建議清單
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.autocomplete-container')) {
+                autocompleteList.style.display = 'none';
+            }
+        });
+
+        // 網頁載入時先從 Local Storage 讀取數值
+        document.addEventListener('DOMContentLoaded', loadFromLocalStorage);
     </script>
-
 </body>
 </html>
