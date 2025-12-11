@@ -3,29 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>濟州島 & 釜山之旅</title>
+    <title>濟州島 & 釜山之旅 (雲端同步版)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-        /* Simple animation for modal */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        .modal-animate {
-            animation: fadeIn 0.2s ease-out forwards;
+        .modal-animate { animation: fadeIn 0.2s ease-out forwards; }
+        /* Loading spinner */
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #3b82f6;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
         }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 pb-20">
@@ -39,17 +39,21 @@
                         <i data-lucide="plane" class="text-blue-600"></i>
                         濟州島 & 釜山之旅
                     </h1>
-                    <p class="text-xs text-slate-500 mt-1">12/14 - 12/21 (8天7夜)</p>
+                    <div class="flex items-center gap-2 mt-1">
+                        <p class="text-xs text-slate-500">12/14 - 12/21 (8天7夜)</p>
+                        <span id="sync-status" class="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 flex items-center gap-1">
+                            未連線
+                        </span>
+                    </div>
                 </div>
-                <button onclick="resetData()" class="text-xs flex items-center gap-1 text-slate-400 hover:text-red-500 transition-colors">
-                    <i data-lucide="rotate-ccw" width="14" height="14"></i> 重置
+                <button onclick="window.resetData()" class="text-xs flex items-center gap-1 text-slate-400 hover:text-red-500 transition-colors">
+                    <i data-lucide="rotate-ccw" width="14" height="14"></i> 重置預設
                 </button>
             </div>
 
-            <!-- Date Tabs -->
             <div class="overflow-x-auto no-scrollbar border-t border-slate-100 bg-white">
                 <div class="flex px-4 py-2 min-w-max gap-2 max-w-3xl mx-auto" id="date-tabs">
-                    <!-- Tabs will be injected here by JS -->
+                    <!-- Tabs injected here -->
                 </div>
             </div>
         </header>
@@ -60,15 +64,17 @@
                 <h2 class="text-lg font-bold text-slate-700 flex items-center gap-2" id="current-date-label">
                     <!-- Date Label injected here -->
                 </h2>
-                <button onclick="openModal(true)" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-1 hover:bg-blue-700 shadow-sm active:scale-95 transition-all">
+                <button onclick="window.openModal(true)" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm flex items-center gap-1 hover:bg-blue-700 shadow-sm active:scale-95 transition-all">
                     <i data-lucide="plus" width="16" height="16"></i> 新增
                 </button>
             </div>
 
             <div class="space-y-4 relative" id="schedule-list">
-                <!-- Vertical Line -->
-                <div class="absolute left-[27px] top-4 bottom-4 w-0.5 bg-slate-200 z-0"></div>
-                <!-- Events will be injected here by JS -->
+                <!-- Content injected here -->
+                <div class="text-center py-10 text-slate-400">
+                    <div class="loader mx-auto mb-2"></div>
+                    載入中...
+                </div>
             </div>
         </main>
 
@@ -76,15 +82,13 @@
         <div id="edit-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
             <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden modal-animate">
                 <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                    <h3 class="font-bold text-lg text-slate-800" id="modal-title">
-                        新增行程
-                    </h3>
-                    <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
+                    <h3 class="font-bold text-lg text-slate-800" id="modal-title">新增行程</h3>
+                    <button onclick="window.closeModal()" class="text-slate-400 hover:text-slate-600">
                         <i data-lucide="x" width="24" height="24"></i>
                     </button>
                 </div>
                 
-                <form id="event-form" onsubmit="handleSaveEvent(event)" class="p-6 space-y-4">
+                <form id="event-form" onsubmit="window.handleSaveEvent(event)" class="p-6 space-y-4">
                     <input type="hidden" id="event-id">
                     <input type="hidden" id="event-is-new">
 
@@ -100,37 +104,28 @@
                             </select>
                         </div>
                     </div>
-
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">標題</label>
                         <input type="text" id="event-title" required placeholder="行程名稱" class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none">
                     </div>
-
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">Google Maps 連結 (選填)</label>
                         <div class="relative">
-                            <div class="absolute left-3 top-2.5 text-slate-400">
-                                <i data-lucide="external-link" width="16" height="16"></i>
-                            </div>
+                            <div class="absolute left-3 top-2.5 text-slate-400"><i data-lucide="external-link" width="16" height="16"></i></div>
                             <input type="url" id="event-location" placeholder="https://maps.app.goo.gl/..." class="w-full border border-slate-200 rounded-lg pl-9 pr-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
                         </div>
                     </div>
-
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">Naver Map 連結 (選填)</label>
                         <div class="relative">
-                            <div class="absolute left-3 top-2.5 text-slate-400">
-                                <i data-lucide="map" width="16" height="16"></i>
-                            </div>
+                            <div class="absolute left-3 top-2.5 text-slate-400"><i data-lucide="map" width="16" height="16"></i></div>
                             <input type="url" id="event-naverLink" placeholder="https://naver.me/..." class="w-full border border-slate-200 rounded-lg pl-9 pr-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
                         </div>
                     </div>
-
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">備註 (選填)</label>
                         <textarea id="event-note" rows="3" class="w-full border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-sm"></textarea>
                     </div>
-
                     <div class="pt-2">
                         <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors flex justify-center items-center gap-2">
                             <i data-lucide="save" width="18" height="18"></i> 儲存行程
@@ -141,7 +136,28 @@
         </div>
     </div>
 
-    <script>
+    <!-- Firebase SDK & App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // ==========================================================
+        // TODO: 請將您的 Firebase 設定貼在下方 (取代註解的部分)
+        // ==========================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVIw0HGeZXEItXD3yFSNnY0e99CyHl8O0",
+            authDomain: "jeju-busan.firebaseapp.com",
+            projectId: "jeju-busan",
+            storageBucket: "jeju-busan.firebasestorage.app",
+            messagingSenderId: "1070744367578",
+            appId: "1:1070744367578:web:d8d56b9f8a9089d85e90e3",
+            measurementId: "G-50FEGM4MEM"
+        };
+        // ==========================================================
+
+        let db;
+        let isFirebaseReady = false;
+
         // --- Data & Constants ---
         const EVENT_TYPES = {
             flight: { icon: 'plane', label: '航班', color: 'bg-blue-100 text-blue-700' },
@@ -164,88 +180,146 @@
             { key: "2024-12-21", label: "12/21 (日)", city: "返程" },
         ];
 
+        // 原始資料 (作為 Reset 用)
         const INITIAL_DATA = {
             "2024-12-14": [
-                { id: 1, time: "06:40", title: "起飛：台北(TPE T1) -> 濟州(CJU)", type: "flight", note: "抵達時間 09:50", location: "", naverLink: "" },
-                { id: 2, time: "10:30", title: "機場辦 WOWPASS", type: "other", note: "", location: "", naverLink: "" },
-                { id: 3, time: "11:00", title: "租車：Jeju one car", type: "transport", note: "搭接駁巴士前往取車", location: "", naverLink: "" },
-                { id: 4, time: "12:00", title: "午餐：姊妹麵條", type: "food", note: "線上候位或現場排。若排隊太久可去機場右邊逛逛", location: "https://maps.app.goo.gl/MyT2WtfVg7CHnWMx9", naverLink: "" },
-                { id: 5, time: "13:30", title: "沿途：小馬燈塔", type: "spot", note: "往民宿沿路看", location: "https://maps.app.goo.gl/DAnGMzoLejX3NEHg9", naverLink: "" },
-                { id: 6, time: "14:30", title: "Check-in: Agoda Stay Mind", type: "stay", note: "12/14~16 入住", location: "https://maps.app.goo.gl/ikMnqjRJP2FbLBwaA", naverLink: "" },
-                { id: 7, time: "15:30", title: "涯月咖啡街 & 海邊步道", type: "cafe", note: "美景咖啡廳 Haejigae Cafe", location: "https://maps.app.goo.gl/yM2cCFbRV6dR8mza9", naverLink: "" },
-                { id: 8, time: "18:00", title: "晚餐：熟成到 涯月店", type: "food", note: "Catchtable 已訂位", location: "https://maps.app.goo.gl/nw4yq7EmFKa2Jgaa9", naverLink: "" },
+                { id: 1, time: "06:40", title: "起飛：台北(TPE T1) -> 濟州(CJU)", type: "flight", note: "抵達時間 09:50", location: "" },
+                { id: 2, time: "10:30", title: "機場辦 WOWPASS", type: "other", note: "", location: "" },
+                { id: 3, time: "11:00", title: "租車：Jeju one car", type: "transport", note: "搭接駁巴士前往取車", location: "" },
+                { id: 4, time: "12:00", title: "午餐：姊妹麵條", type: "food", note: "線上候位或現場排。若排隊太久可去機場右邊逛逛", location: "https://maps.app.goo.gl/MyT2WtfVg7CHnWMx9" },
+                { id: 5, time: "13:30", title: "沿途：小馬燈塔", type: "spot", note: "往民宿沿路看", location: "https://maps.app.goo.gl/DAnGMzoLejX3NEHg9" },
+                { id: 6, time: "14:30", title: "Check-in: Agoda Stay Mind", type: "stay", note: "12/14~16 入住", location: "https://maps.app.goo.gl/ikMnqjRJP2FbLBwaA" },
+                { id: 7, time: "15:30", title: "涯月咖啡街 & 海邊步道", type: "cafe", note: "美景咖啡廳 Haejigae Cafe", location: "https://maps.app.goo.gl/yM2cCFbRV6dR8mza9" },
+                { id: 8, time: "18:00", title: "晚餐：熟成到 涯月店", type: "food", note: "Catchtable 已訂位", location: "https://maps.app.goo.gl/nw4yq7EmFKa2Jgaa9" },
             ],
             "2024-12-15": [
-                { id: 1, time: "09:00", title: "早餐：장인의집 (匠人之家) 餃子", type: "food", note: "涯月本店", location: "https://maps.app.goo.gl/PXREdFxfuakg2uCj7", naverLink: "" },
-                { id: 2, time: "10:30", title: "買點心：Umu 布丁", type: "food", note: "", location: "https://maps.app.goo.gl/92toZTsWkiw1vNdi6", naverLink: "" },
-                { id: 3, time: "11:00", title: "買點心：蛋塔", type: "food", note: "", location: "https://maps.app.goo.gl/yYQmuGVcGhtLM3N49", naverLink: "" },
-                { id: 4, time: "12:00", title: "御乘生岳", type: "spot", note: "簡單步道爬山看雪景，來回約1.5hr", location: "https://maps.app.goo.gl/HNvKBDodKXFHeAFJA", naverLink: "" },
-                { id: 5, time: "14:30", title: "Osulloc 茶博物館", type: "spot", note: "innisfree 做手工香皂", location: "https://maps.app.goo.gl/km8enqRQwh8nVj1j8", naverLink: "" },
-                { id: 6, time: "18:00", title: "晚餐：小餐廳", type: "food", note: "", location: "https://maps.app.goo.gl/PJV3GVZ5a92RfKzs7", naverLink: "" },
-                { id: 7, time: "20:00", title: "消夜：炸雞", type: "food", note: "", location: "https://maps.app.goo.gl/B4donucuEMdJNtfW7", naverLink: "" },
+                { id: 1, time: "09:00", title: "早餐：장인의집 (匠人之家) 餃子", type: "food", note: "涯月本店", location: "https://maps.app.goo.gl/PXREdFxfuakg2uCj7" },
+                { id: 2, time: "10:30", title: "買點心：Umu 布丁", type: "food", note: "", location: "https://maps.app.goo.gl/92toZTsWkiw1vNdi6" },
+                { id: 3, time: "11:00", title: "買點心：蛋塔", type: "food", note: "", location: "https://maps.app.goo.gl/yYQmuGVcGhtLM3N49" },
+                { id: 4, time: "12:00", title: "御乘生岳", type: "spot", note: "簡單步道爬山看雪景，來回約1.5hr", location: "https://maps.app.goo.gl/HNvKBDodKXFHeAFJA" },
+                { id: 5, time: "14:30", title: "Osulloc 茶博物館", type: "spot", note: "innisfree 做手工香皂", location: "https://maps.app.goo.gl/km8enqRQwh8nVj1j8" },
+                { id: 6, time: "18:00", title: "晚餐：小餐廳", type: "food", note: "", location: "https://maps.app.goo.gl/PJV3GVZ5a92RfKzs7" },
+                { id: 7, time: "20:00", title: "消夜：炸雞", type: "food", note: "", location: "https://maps.app.goo.gl/B4donucuEMdJNtfW7" },
             ],
             "2024-12-16": [
-                { id: 1, time: "09:00", title: "彩虹堤防", type: "spot", note: "拍照點", location: "https://maps.app.goo.gl/tQb7Z8Sc4m3jfrPD6", naverLink: "" },
-                { id: 2, time: "10:00", title: "MOCHIRON 達克瓦茲", type: "food", note: "", location: "https://maps.app.goo.gl/ptn4f2e3WcNvdNrk8", naverLink: "" },
-                { id: 3, time: "10:30", title: "Abebe 甜甜圈", type: "food", note: "", location: "https://maps.app.goo.gl/nmiXv2vneo1jycMw6", naverLink: "" },
-                { id: 4, time: "11:00", title: "大蒜麵包", type: "food", note: "", location: "https://maps.app.goo.gl/ofoSeif3i5jA32xb8", naverLink: "" },
-                { id: 5, time: "11:30", title: "倫敦貝果", type: "food", note: "", location: "https://maps.app.goo.gl/Xf2xyxCZe4mkhL9BA", naverLink: "" },
-                { id: 6, time: "12:30", title: "午餐：萬金麵條", type: "food", note: "視情況決定是否用餐", location: "https://maps.app.goo.gl/1i8Pjgxx5F7DjhZt9", naverLink: "" },
-                { id: 7, time: "14:00", title: "山君不離", type: "spot", note: "芒草小徑", location: "https://maps.app.goo.gl/1XAjgWjS3FKBY4yy8", naverLink: "" },
-                { id: 8, time: "15:00", title: "Cafe the container", type: "cafe", note: "採橘子體驗", location: "https://maps.app.goo.gl/gpw4Gun3KLcv4djk7", naverLink: "" },
-                { id: 9, time: "16:00", title: "Secret Forest 神秘森林", type: "spot", note: "拍照", location: "https://maps.app.goo.gl/AYbz7M1b32EAzuit8", naverLink: "" },
-                { id: 10, time: "17:00", title: "山茶花園 / 橘子咖啡", type: "cafe", note: "橘花閣樓 或 小巧可愛橘子咖啡廳", location: "https://maps.app.goo.gl/rYPNAxk3MANKGEE77", naverLink: "" },
-                { id: 11, time: "18:30", title: "晚餐：滿足的商會", type: "food", note: "Naver 已預約", location: "https://maps.app.goo.gl/JYgwnhWND7DeLqR6A", naverLink: "" },
-                { id: 12, time: "20:00", title: "Check-in: Agoda 阿賓斯", type: "stay", note: "12/16~18 入住", location: "https://maps.app.goo.gl/5XSmxeUw5k7hMuRb8", naverLink: "" },
+                { id: 1, time: "09:00", title: "彩虹堤防", type: "spot", note: "拍照點", location: "https://maps.app.goo.gl/tQb7Z8Sc4m3jfrPD6" },
+                { id: 2, time: "10:00", title: "MOCHIRON 達克瓦茲", type: "food", note: "", location: "https://maps.app.goo.gl/ptn4f2e3WcNvdNrk8" },
+                { id: 3, time: "10:30", title: "Abebe 甜甜圈", type: "food", note: "", location: "https://maps.app.goo.gl/nmiXv2vneo1jycMw6" },
+                { id: 4, time: "11:00", title: "大蒜麵包", type: "food", note: "", location: "https://maps.app.goo.gl/ofoSeif3i5jA32xb8" },
+                { id: 5, time: "11:30", title: "倫敦貝果", type: "food", note: "", location: "https://maps.app.goo.gl/Xf2xyxCZe4mkhL9BA" },
+                { id: 6, time: "12:30", title: "午餐：萬金麵條", type: "food", note: "視情況決定是否用餐", location: "https://maps.app.goo.gl/1i8Pjgxx5F7DjhZt9" },
+                { id: 7, time: "14:00", title: "山君不離", type: "spot", note: "芒草小徑", location: "https://maps.app.goo.gl/1XAjgWjS3FKBY4yy8" },
+                { id: 8, time: "15:00", title: "Cafe the container", type: "cafe", note: "採橘子體驗", location: "https://maps.app.goo.gl/gpw4Gun3KLcv4djk7" },
+                { id: 9, time: "16:00", title: "Secret Forest 神秘森林", type: "spot", note: "拍照", location: "https://maps.app.goo.gl/AYbz7M1b32EAzuit8" },
+                { id: 10, time: "17:00", title: "山茶花園 / 橘子咖啡", type: "cafe", note: "橘花閣樓 或 小巧可愛橘子咖啡廳", location: "https://maps.app.goo.gl/rYPNAxk3MANKGEE77" },
+                { id: 11, time: "18:30", title: "晚餐：滿足的商會", type: "food", note: "Naver 已預約", location: "https://maps.app.goo.gl/JYgwnhWND7DeLqR6A" },
+                { id: 12, time: "20:00", title: "Check-in: Agoda 阿賓斯", type: "stay", note: "12/16~18 入住", location: "https://maps.app.goo.gl/5XSmxeUw5k7hMuRb8" },
             ],
             "2024-12-17": [
-                { id: 1, time: "09:30", title: "orrrn 咖啡廳", type: "cafe", note: "", location: "https://maps.app.goo.gl/gMX4WBWXn5wa71Ni9", naverLink: "" },
-                { id: 2, time: "11:00", title: "前往牛島", type: "transport", note: "每半小時一班船。末班回程 17:30", location: "", naverLink: "" },
-                { id: 3, time: "12:00", title: "午餐：哈哈呵呵漢堡 / On-Off 炸豬排", type: "food", note: "", location: "https://maps.app.goo.gl/2jp6S8gai26qJ1zp8", naverLink: "" },
-                { id: 4, time: "14:00", title: "BLANC ROCHER 咖啡廳", type: "cafe", note: "花生冰淇淋", location: "https://maps.app.goo.gl/7cjqmTCEYVuQQBCp7", naverLink: "" },
-                { id: 5, time: "17:00", title: "返回濟州本島", type: "transport", note: "", location: "", naverLink: "" },
-                { id: 6, time: "18:00", title: "偶來市場", type: "spot", note: "晚餐/逛街", location: "", naverLink: "" },
-                { id: 7, time: "19:30", title: "備選：金岳 / 海豚樂園 / Arte / 熔岩咖啡", type: "spot", note: "視時間與體力安排", location: "https://maps.app.goo.gl/bR8kcauzTz5B3SUVA", naverLink: "" },
+                { id: 1, time: "09:30", title: "orrrn 咖啡廳", type: "cafe", note: "", location: "https://maps.app.goo.gl/gMX4WBWXn5wa71Ni9" },
+                { id: 2, time: "11:00", title: "前往牛島", type: "transport", note: "每半小時一班船。末班回程 17:30", location: "" },
+                { id: 3, time: "12:00", title: "午餐：哈哈呵呵漢堡 / On-Off 炸豬排", type: "food", note: "", location: "https://maps.app.goo.gl/2jp6S8gai26qJ1zp8" },
+                { id: 4, time: "14:00", title: "BLANC ROCHER 咖啡廳", type: "cafe", note: "花生冰淇淋", location: "https://maps.app.goo.gl/7cjqmTCEYVuQQBCp7" },
+                { id: 5, time: "17:00", title: "返回濟州本島", type: "transport", note: "", location: "" },
+                { id: 6, time: "18:00", title: "偶來市場", type: "spot", note: "晚餐/逛街", location: "" },
+                { id: 7, time: "19:30", title: "備選：金岳 / 海豚樂園 / Arte / 熔岩咖啡", type: "spot", note: "視時間與體力安排", location: "https://maps.app.goo.gl/bR8kcauzTz5B3SUVA" },
             ],
             "2024-12-18": [
-                { id: 1, time: "10:30", title: "早餐：Egg Drop (機場內)", type: "food", note: "", location: "", naverLink: "" },
-                { id: 2, time: "12:55", title: "起飛：濟州(CJU) -> 釜山(PUS)", type: "flight", note: "抵達時間 14:00", location: "", naverLink: "" },
-                { id: 3, time: "15:00", title: "Check-in: Good Ol' Days Hotel", type: "stay", note: "12/18~21 入住", location: "https://maps.app.goo.gl/LsASgqmsWGpfGbw56", naverLink: "" },
-                { id: 4, time: "16:00", title: "新世界百貨", type: "spot", note: "逛街", location: "https://maps.app.goo.gl/f7V87PQXrH4aqWPU7", naverLink: "" },
-                { id: 5, time: "20:00", title: "消夜：橋村炸雞 / Namsun Chicken", type: "food", note: "Namsun 在住宿旁", location: "https://maps.app.goo.gl/Pp897AX5b9ZvyAdn8", naverLink: "" },
+                { id: 1, time: "10:30", title: "早餐：Egg Drop (機場內)", type: "food", note: "", location: "" },
+                { id: 2, time: "12:55", title: "起飛：濟州(CJU) -> 釜山(PUS)", type: "flight", note: "抵達時間 14:00", location: "" },
+                { id: 3, time: "15:00", title: "Check-in: Good Ol' Days Hotel", type: "stay", note: "12/18~21 入住", location: "https://maps.app.goo.gl/LsASgqmsWGpfGbw56" },
+                { id: 4, time: "16:00", title: "新世界百貨", type: "spot", note: "逛街", location: "https://maps.app.goo.gl/f7V87PQXrH4aqWPU7" },
+                { id: 5, time: "20:00", title: "消夜：橋村炸雞 / Namsun Chicken", type: "food", note: "Namsun 在住宿旁", location: "https://maps.app.goo.gl/Pp897AX5b9ZvyAdn8" },
             ],
             "2024-12-19": [
-                { id: 1, time: "09:30", title: "醫美：金陽濟", type: "other", note: "西面站", location: "", naverLink: "" },
-                { id: 2, time: "12:30", title: "午餐：異世雞 Isegye", type: "food", note: "Catchtable 候位", location: "https://maps.app.goo.gl/b72mTRntr91F8w9E6", naverLink: "" },
-                { id: 3, time: "14:00", title: "PUFF Bakery", type: "food", note: "買開心果麵包", location: "https://maps.app.goo.gl/xtzNJzdSsZKrwwW4A", naverLink: "" },
-                { id: 4, time: "15:00", title: "白淺灘文化村 / 甘川洞文化村", type: "spot", note: "擇一前往", location: "", naverLink: "" },
-                { id: 5, time: "17:00", title: "松島", type: "spot", note: "", location: "", naverLink: "" },
-                { id: 6, time: "19:00", title: "富平罐頭市場 & BIFF廣場", type: "food", note: "晚餐與逛街", location: "", naverLink: "" },
+                { id: 1, time: "09:30", title: "醫美：金陽濟", type: "other", note: "西面站", location: "" },
+                { id: 2, time: "12:30", title: "午餐：異世雞 Isegye", type: "food", note: "Catchtable 候位", location: "https://maps.app.goo.gl/b72mTRntr91F8w9E6" },
+                { id: 3, time: "14:00", title: "PUFF Bakery", type: "food", note: "買開心果麵包", location: "https://maps.app.goo.gl/xtzNJzdSsZKrwwW4A" },
+                { id: 4, time: "15:00", title: "白淺灘文化村 / 甘川洞文化村", type: "spot", note: "擇一前往", location: "" },
+                { id: 5, time: "17:00", title: "松島", type: "spot", note: "", location: "" },
+                { id: 6, time: "19:00", title: "富平罐頭市場 & BIFF廣場", type: "food", note: "晚餐與逛街", location: "" },
             ],
             "2024-12-20": [
-                { id: 1, time: "12:00", title: "午餐：Stone Street", type: "food", note: "葡萄起司烤餅", location: "https://maps.app.goo.gl/QmGWpFg47xmxBCht7", naverLink: "" },
-                { id: 2, time: "15:30", title: "膠囊列車", type: "spot", note: "15:30~16:00 場次。登入:信箱 / 密碼:0906", location: "https://www.tbluelinepark.com/mypage/login_eng/GD2100036", naverLink: "" },
-                { id: 3, time: "18:00", title: "廣安里無人機表演", type: "spot", note: "每週六晚上", location: "", naverLink: "" },
+                { id: 1, time: "12:00", title: "午餐：Stone Street", type: "food", note: "葡萄起司烤餅", location: "https://maps.app.goo.gl/QmGWpFg47xmxBCht7" },
+                { id: 2, time: "15:30", title: "膠囊列車", type: "spot", note: "15:30~16:00 場次。登入:信箱 / 密碼:0906", location: "https://www.tbluelinepark.com/mypage/login_eng/GD2100036" },
+                { id: 3, time: "18:00", title: "廣安里無人機表演", type: "spot", note: "每週六晚上", location: "" },
             ],
             "2024-12-21": [
-                { id: 1, time: "11:00", title: "前往金海機場", type: "transport", note: "", location: "", naverLink: "" },
-                { id: 2, time: "14:05", title: "起飛：釜山(PUS) -> 高雄(KHH)", type: "flight", note: "抵達時間 16:05", location: "", naverLink: "" },
+                { id: 1, time: "11:00", title: "前往金海機場", type: "transport", note: "", location: "" },
+                { id: 2, time: "14:05", title: "起飛：釜山(PUS) -> 高雄(KHH)", type: "flight", note: "抵達時間 16:05", location: "" },
             ]
         };
 
         // --- State Management ---
-        let schedule = JSON.parse(localStorage.getItem('trip-schedule-v1')) || INITIAL_DATA;
+        let schedule = INITIAL_DATA; // Default fallback
         let selectedDate = "2024-12-14";
+        const TRIP_DOC_ID = "my-trip-v1"; // Firestore Document ID
+
+        // Initialize Firebase if config exists
+        if (firebaseConfig.apiKey) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                isFirebaseReady = true;
+                
+                // Real-time Listener (核心功能：監聽資料庫變更)
+                const unsub = onSnapshot(doc(db, "trips", TRIP_DOC_ID), (docSnapshot) => {
+                    const statusEl = document.getElementById('sync-status');
+                    if (docSnapshot.exists()) {
+                        schedule = docSnapshot.data().data; // Update local state
+                        statusEl.innerText = "已同步";
+                        statusEl.className = "text-[10px] px-1.5 py-0.5 rounded bg-green-100 text-green-700 flex items-center gap-1";
+                    } else {
+                        // Document doesn't exist, create it with initial data
+                        saveDataToFirebase(INITIAL_DATA);
+                        statusEl.innerText = "初始化中";
+                    }
+                    renderApp();
+                }, (error) => {
+                    console.error("Sync error:", error);
+                    document.getElementById('sync-status').innerText = "連線錯誤";
+                });
+            } catch (e) {
+                console.error("Firebase Init Error:", e);
+                alert("Firebase 設定有誤，請檢查控制台");
+            }
+        } else {
+            // Fallback to localStorage if no Firebase config
+            const saved = localStorage.getItem('trip-schedule-v1');
+            if (saved) schedule = JSON.parse(saved);
+            document.getElementById('sync-status').innerText = "本地模式 (無雲端)";
+            renderApp();
+        }
+
+        // --- Core Functions ---
+
+        async function saveData() {
+            if (isFirebaseReady) {
+                document.getElementById('sync-status').innerText = "儲存中...";
+                await saveDataToFirebase(schedule);
+            } else {
+                localStorage.setItem('trip-schedule-v1', JSON.stringify(schedule));
+                renderApp();
+            }
+        }
+
+        async function saveDataToFirebase(data) {
+            try {
+                await setDoc(doc(db, "trips", TRIP_DOC_ID), { 
+                    data: data,
+                    lastUpdated: new Date().toISOString()
+                });
+            } catch (e) {
+                console.error("Save error:", e);
+                alert("儲存失敗，請檢查網路或 Firebase 權限");
+            }
+        }
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             initTypeSelect();
-            renderApp();
+            if(!isFirebaseReady) renderApp(); // Render immediately if local
         });
-
-        function saveData() {
-            localStorage.setItem('trip-schedule-v1', JSON.stringify(schedule));
-        }
 
         // --- Render Functions ---
 
@@ -253,7 +327,6 @@
             renderDateTabs();
             renderScheduleList();
             renderHeaderLabel();
-            // Re-initialize icons after DOM updates
             lucide.createIcons();
         }
 
@@ -269,12 +342,8 @@
                 const isSelected = selectedDate === date.key;
                 const bgClass = isSelected ? 'bg-blue-600 text-white shadow-md scale-105' : 'bg-slate-50 text-slate-600 hover:bg-slate-100';
                 const subTextClass = isSelected ? 'text-blue-100' : 'text-slate-400';
-                
                 return `
-                    <button
-                        onclick="switchDate('${date.key}')"
-                        class="flex flex-col items-center px-4 py-2 rounded-xl text-sm transition-all ${bgClass}"
-                    >
+                    <button onclick="window.switchDate('${date.key}')" class="flex flex-col items-center px-4 py-2 rounded-xl text-sm transition-all ${bgClass}">
                         <span class="font-bold">${date.label}</span>
                         <span class="text-[10px] mt-0.5 ${subTextClass}">${date.city}</span>
                     </button>
@@ -285,8 +354,6 @@
         function renderScheduleList() {
             const container = document.getElementById('schedule-list');
             const events = schedule[selectedDate] || [];
-            
-            // Keep the vertical line
             const verticalLine = `<div class="absolute left-[27px] top-4 bottom-4 w-0.5 bg-slate-200 z-0"></div>`;
 
             if (events.length === 0) {
@@ -301,72 +368,52 @@
 
             const eventsHTML = events.map((event, index) => {
                 const typeConfig = EVENT_TYPES[event.type] || EVENT_TYPES.other;
-                
-                // Map Icons and Naver Button Logic
                 let mapButtons = '';
                 if (event.location) {
-                    mapButtons += `
-                        <a href="${event.location}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded hover:bg-emerald-100 transition-colors">
-                            <i data-lucide="map-pin" width="12" height="12"></i> Google Maps
-                        </a>
-                    `;
+                    mapButtons += `<a href="${event.location}" target="_blank" class="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded hover:bg-emerald-100 transition-colors"><i data-lucide="map-pin" width="12" height="12"></i> Google Maps</a>`;
                 }
                 if (event.naverLink) {
-                    mapButtons += `
-                        <a href="${event.naverLink}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded hover:bg-green-100 transition-colors">
-                            <i data-lucide="map" width="12" height="12"></i> Naver Map
-                        </a>
-                    `;
+                    mapButtons += `<a href="${event.naverLink}" target="_blank" class="inline-flex items-center gap-1 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded hover:bg-green-100 transition-colors"><i data-lucide="map" width="12" height="12"></i> Naver Map</a>`;
                 }
 
                 return `
                     <div class="relative z-0 group">
                         <div class="flex gap-4">
-                            <!-- Timeline Icon -->
                             <div class="flex-shrink-0 relative z-10 bg-slate-50 py-1">
                                 <div class="p-2 rounded-full ${typeConfig.color} shadow-sm">
                                     <i data-lucide="${typeConfig.icon}" width="20" height="20"></i>
                                 </div>
                             </div>
-
-                            <!-- Card -->
                             <div class="flex-grow bg-white p-4 rounded-xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
                                 <div class="flex justify-between items-start">
                                     <div class="flex flex-col">
                                         <span class="text-sm font-bold text-blue-600 mb-0.5 font-mono">${event.time || "--:--"}</span>
                                         <h3 class="font-bold text-slate-800 text-lg leading-tight">${event.title}</h3>
                                     </div>
-                                    
-                                    <!-- Actions -->
                                     <div class="flex gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
                                          <div class="flex flex-col gap-1 mr-2">
-                                           <button onclick="moveEvent(${index}, 'up')" ${index === 0 ? 'disabled class="p-1 opacity-30"' : 'class="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-blue-600"'}>
+                                           <button onclick="window.moveEvent(${index}, 'up')" ${index === 0 ? 'disabled class="p-1 opacity-30"' : 'class="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-blue-600"'}>
                                              <i data-lucide="arrow-up" width="14" height="14"></i>
                                            </button>
-                                           <button onclick="moveEvent(${index}, 'down')" ${index === events.length - 1 ? 'disabled class="p-1 opacity-30"' : 'class="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-blue-600"'}>
+                                           <button onclick="window.moveEvent(${index}, 'down')" ${index === events.length - 1 ? 'disabled class="p-1 opacity-30"' : 'class="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-blue-600"'}>
                                              <i data-lucide="arrow-down" width="14" height="14"></i>
                                            </button>
                                          </div>
-                                        <button onclick='openEditModal(${JSON.stringify(event).replace(/'/g, "&#39;")})' class="p-1.5 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg">
+                                        <button onclick='window.openEditModal(${JSON.stringify(event).replace(/'/g, "&#39;")})' class="p-1.5 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg">
                                             <i data-lucide="edit-2" width="16" height="16"></i>
                                         </button>
-                                        <button onclick="deleteEvent(${event.id})" class="p-1.5 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-lg">
+                                        <button onclick="window.deleteEvent(${event.id})" class="p-1.5 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-lg">
                                             <i data-lucide="trash-2" width="16" height="16"></i>
                                         </button>
                                     </div>
                                 </div>
-
                                 ${event.note ? `<p class="text-sm text-slate-500 mt-2 bg-slate-50 p-2 rounded border border-slate-100">${event.note}</p>` : ''}
-
-                                <div class="flex flex-wrap gap-2 mt-3">
-                                    ${mapButtons}
-                                </div>
+                                <div class="flex flex-wrap gap-2 mt-3">${mapButtons}</div>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
-
             container.innerHTML = verticalLine + eventsHTML;
         }
 
@@ -377,22 +424,22 @@
             ).join('');
         }
 
-        // --- Actions ---
+        // --- Global Functions (Exposed to Window) ---
 
-        function switchDate(dateKey) {
+        window.switchDate = (dateKey) => {
             selectedDate = dateKey;
             renderApp();
-        }
+        };
 
-        function resetData() {
-            if (confirm('確定要重置回原始行程嗎？所有自訂修改將會消失。')) {
-                schedule = JSON.parse(JSON.stringify(INITIAL_DATA)); // Deep copy
+        window.resetData = () => {
+            if (confirm('確定要重置回原始行程嗎？注意：這會覆蓋雲端上的所有資料！')) {
+                schedule = JSON.parse(JSON.stringify(INITIAL_DATA));
                 saveData();
                 renderApp();
             }
-        }
+        };
 
-        function moveEvent(index, direction) {
+        window.moveEvent = (index, direction) => {
             const events = [...schedule[selectedDate]];
             if (direction === 'up' && index > 0) {
                 [events[index], events[index - 1]] = [events[index - 1], events[index]];
@@ -401,29 +448,22 @@
             }
             schedule[selectedDate] = events;
             saveData();
-            renderApp();
-        }
+        };
 
-        function deleteEvent(id) {
+        window.deleteEvent = (id) => {
             if (confirm('確定要刪除此行程嗎？')) {
                 schedule[selectedDate] = schedule[selectedDate].filter(e => e.id !== id);
                 saveData();
-                renderApp();
             }
-        }
+        };
 
-        // --- Modal Logic ---
-
-        function openModal(isNew = true) {
+        window.openModal = (isNew = true) => {
             const modal = document.getElementById('edit-modal');
             const title = document.getElementById('modal-title');
-            
-            // Set Hidden Fields
             document.getElementById('event-is-new').value = isNew;
             
             if (isNew) {
                 title.innerText = '新增行程';
-                // Clear form
                 document.getElementById('event-id').value = Date.now();
                 document.getElementById('event-time').value = '';
                 document.getElementById('event-type').value = 'spot';
@@ -432,14 +472,12 @@
                 document.getElementById('event-naverLink').value = '';
                 document.getElementById('event-note').value = '';
             }
-            
             modal.classList.remove('hidden');
-        }
+        };
 
-        function openEditModal(event) {
-            openModal(false);
+        window.openEditModal = (event) => {
+            window.openModal(false);
             document.getElementById('modal-title').innerText = '編輯行程';
-            
             document.getElementById('event-id').value = event.id;
             document.getElementById('event-time').value = event.time;
             document.getElementById('event-type').value = event.type;
@@ -447,15 +485,14 @@
             document.getElementById('event-location').value = event.location;
             document.getElementById('event-naverLink').value = event.naverLink || '';
             document.getElementById('event-note').value = event.note;
-        }
+        };
 
-        function closeModal() {
+        window.closeModal = () => {
             document.getElementById('edit-modal').classList.add('hidden');
-        }
+        };
 
-        function handleSaveEvent(e) {
+        window.handleSaveEvent = (e) => {
             e.preventDefault();
-            
             const isNew = document.getElementById('event-is-new').value === 'true';
             const id = parseInt(document.getElementById('event-id').value);
             
@@ -470,27 +507,20 @@
             };
 
             let currentEvents = schedule[selectedDate] || [];
-
             if (isNew) {
                 currentEvents.push(newEvent);
             } else {
                 currentEvents = currentEvents.map(ev => ev.id === id ? newEvent : ev);
             }
-
-            // Sort by time
             currentEvents.sort((a, b) => a.time.localeCompare(b.time));
 
             schedule[selectedDate] = currentEvents;
             saveData();
-            closeModal();
-            renderApp();
-        }
+            window.closeModal();
+        };
 
-        // Close modal when clicking outside
         document.getElementById('edit-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
+            if (e.target === this) window.closeModal();
         });
 
     </script>
