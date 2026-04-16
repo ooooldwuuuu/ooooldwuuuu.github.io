@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>馬爾地夫旅遊行程 - Maldives Trip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tab-active {
+            border-bottom: 4px solid #0ea5e9;
+            color: #0ea5e9;
+            font-weight: 700;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .checkbox-custom {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+        .checkbox-custom:checked + label {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem;
+        }
+        .modal.active {
+            display: flex;
+        }
+        body.modal-open {
+            overflow: hidden;
+        }
+        /* 排序按鈕樣式優化 */
+        .order-btn {
+            padding: 0.25rem;
+            color: #94a3b8;
+            transition: color 0.2s;
+        }
+        .order-btn:hover {
+            color: #0ea5e9;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-24">
+
+    <!-- Header -->
+    <header class="bg-sky-600 text-white pt-8 pb-10 px-6 shadow-lg text-center relative overflow-hidden">
+        <div class="relative z-10">
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">馬爾地夫 2026</h1>
+            <p class="text-sky-100 mt-1 text-sm">雲端同步行動助手</p>
+        </div>
+        <div class="absolute top-0 right-0 opacity-10 transform translate-x-8 -translate-y-8">
+            <i data-lucide="palmtree" class="w-24 h-24"></i>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-sky-100">
+        <div class="flex max-w-2xl mx-auto">
+            <button onclick="switchTab('schedule')" id="tab-schedule" class="flex-1 py-4 text-center text-sm font-medium transition-all tab-active">
+                <i data-lucide="calendar" class="inline-block w-4 h-4 mr-1.5 mb-0.5"></i> 行程表
+            </button>
+            <button onclick="switchTab('checklist')" id="tab-checklist" class="flex-1 py-4 text-center text-sm font-medium transition-all text-gray-400">
+                <i data-lucide="check-square" class="inline-block w-4 h-4 mr-1.5 mb-0.5"></i> 檢查清單
+            </button>
+        </div>
+    </nav>
+
+    <!-- Content Sections -->
+    <main class="max-w-2xl mx-auto p-4 sm:p-6 mt-2">
+        
+        <!-- Schedule View -->
+        <section id="view-schedule" class="space-y-6">
+            <div id="schedule-container" class="space-y-6">
+                <div class="text-center py-20 text-gray-400">
+                    <div class="animate-spin inline-block w-8 h-8 border-4 border-sky-500 border-t-transparent rounded-full mb-3"></div>
+                    <p id="loading-text">正在獲取最新行程...</p>
+                </div>
+            </div>
+            <button onclick="openDayModal()" class="w-full py-4 bg-white border-2 border-dashed border-sky-200 rounded-2xl text-sky-500 hover:bg-sky-50 hover:border-sky-300 transition-all font-bold text-sm shadow-sm flex items-center justify-center">
+                <i data-lucide="calendar-plus" class="w-5 h-5 mr-2"></i> 新增日期分段
+            </button>
+        </section>
+
+        <!-- Checklist View -->
+        <section id="view-checklist" class="hidden space-y-6">
+            <div id="checklist-container" class="space-y-6">
+                <!-- 由 JS 動態渲染 -->
+            </div>
+            <button onclick="openCategoryModal()" class="w-full py-4 bg-white border-2 border-dashed border-sky-200 rounded-2xl text-sky-500 hover:bg-sky-50 hover:border-sky-300 transition-all font-bold text-sm shadow-sm flex items-center justify-center">
+                <i data-lucide="folder-plus" class="w-5 h-5 mr-2"></i> 新增類別區塊
+            </button>
+        </section>
+
+    </main>
+
+    <!-- Modals -->
+    <!-- 1. 行程項目 Modal -->
+    <div id="item-modal" class="modal">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="item-modal-title" class="text-lg font-bold text-sky-900">新增行程項目</h3>
+                <button onclick="closeModal()" class="text-gray-400 p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-sky-600 mb-1 uppercase tracking-wider">時間</label>
+                    <input type="text" id="modal-time" placeholder="例如 14:20" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-sky-600 mb-1 uppercase tracking-wider">活動內容</label>
+                    <input type="text" id="modal-content" placeholder="請輸入行程詳情" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-sky-600 mb-1 uppercase tracking-wider">備註</label>
+                    <textarea id="modal-note" placeholder="相關提醒或連結" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none text-sm" rows="3"></textarea>
+                </div>
+                <label class="flex items-center p-3 bg-rose-50 rounded-xl cursor-pointer">
+                    <input type="checkbox" id="modal-important" class="w-4 h-4 text-rose-600 rounded focus:ring-rose-500">
+                    <span class="ml-3 text-sm font-bold text-rose-700">設為重要提醒</span>
+                </label>
+            </div>
+            <button id="modal-save-btn" class="w-full mt-6 py-4 bg-sky-600 text-white rounded-xl font-bold shadow-lg shadow-sky-200 active:scale-95 transition-transform">儲存行程</button>
+        </div>
+    </div>
+
+    <!-- 2. 日期分段 Modal -->
+    <div id="day-modal" class="modal">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+            <h3 id="day-modal-title" class="text-lg font-bold text-sky-900 mb-6">新增日期分段</h3>
+            <div class="space-y-4">
+                <input type="text" id="day-date" placeholder="例如：4/27 (一)" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+                <input type="text" id="day-title" placeholder="標題，如：回國日" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+            </div>
+            <div class="flex gap-3 mt-8">
+                <button onclick="closeModal()" class="flex-1 py-3 text-gray-500 font-bold">取消</button>
+                <button id="day-modal-save-btn" class="flex-1 py-3 bg-sky-600 text-white rounded-xl font-bold active:scale-95 transition-transform">確認</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 清單類別 Modal -->
+    <div id="category-modal" class="modal">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl">
+            <h3 id="category-modal-title" class="text-lg font-bold text-sky-900 mb-6">新增類別區塊</h3>
+            <div class="space-y-4">
+                <input type="text" id="cat-name" placeholder="類別名稱，如：電子產品" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+                <div class="grid grid-cols-4 gap-2">
+                    <button onclick="setCatIcon('briefcase')" class="icon-btn p-3 border rounded-xl hover:bg-sky-50" data-icon="briefcase"><i data-lucide="briefcase"></i></button>
+                    <button onclick="setCatIcon('camera')" class="icon-btn p-3 border rounded-xl hover:bg-sky-50" data-icon="camera"><i data-lucide="camera"></i></button>
+                    <button onclick="setCatIcon('bath')" class="icon-btn p-3 border rounded-xl hover:bg-sky-50" data-icon="bath"><i data-lucide="bath"></i></button>
+                    <button onclick="setCatIcon('shirt')" class="icon-btn p-3 border rounded-xl hover:bg-sky-50" data-icon="shirt"><i data-lucide="shirt"></i></button>
+                </div>
+                <input type="hidden" id="cat-icon" value="package">
+            </div>
+            <button id="category-modal-save-btn" class="w-full mt-6 py-4 bg-sky-600 text-white rounded-xl font-bold active:scale-95 transition-transform">儲存類別</button>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDcteMBDxbipPnIe31mV03XTdpd9Hoyaoo",
+            authDomain: "travel-aa9da.firebaseapp.com",
+            projectId: "travel-aa9da",
+            storageBucket: "travel-aa9da.firebasestorage.app",
+            messagingSenderId: "294695887678",
+            appId: "1:294695887678:web:7e0f01891037ecd93d426f",
+            measurementId: "G-T4CNSG33E9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const DATA_PATH = ['trips', 'maldives2026'];
+        let globalData = null;
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) loadData();
+            else signInAnonymously(auth);
+        });
+
+        function loadData() {
+            const docRef = doc(db, ...DATA_PATH);
+            onSnapshot(docRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    globalData = snapshot.data();
+                    renderAll();
+                }
+            }, (err) => showErrorMessage(err.message));
+        }
+
+        function renderAll() {
+            renderSchedule(globalData.schedule || []);
+            renderChecklist(globalData.checklist || []);
+            lucide.createIcons();
+        }
+
+        // --- Render Functions ---
+
+        function renderSchedule(days) {
+            const container = document.getElementById('schedule-container');
+            container.innerHTML = days.map((day, dIdx) => `
+                <div class="relative pl-6 pb-2">
+                    ${dIdx < days.length - 1 ? '<div class="absolute left-2.5 top-10 bottom-0 w-0.5 bg-sky-100"></div>' : ''}
+                    <div class="absolute left-0 top-1.5 w-5 h-5 rounded-full bg-sky-500 border-4 border-sky-50"></div>
+                    
+                    <div class="glass-card rounded-2xl p-5 shadow-sm border-l-4 border-sky-500 mb-4">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-sky-900">${day.date}</h3>
+                                <p class="text-xs text-sky-500 font-medium">${day.title || '行程說明'}</p>
+                            </div>
+                            <div class="flex gap-1 items-center">
+                                ${dIdx > 0 ? `<button onclick="moveScheduleDay(${dIdx}, -1)" class="order-btn"><i data-lucide="chevron-up" class="w-4 h-4"></i></button>` : ''}
+                                ${dIdx < days.length - 1 ? `<button onclick="moveScheduleDay(${dIdx}, 1)" class="order-btn"><i data-lucide="chevron-down" class="w-4 h-4"></i></button>` : ''}
+                                <button onclick="openDayModal(${dIdx})" class="p-1.5 text-sky-500 ml-1"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                <button onclick="deleteDay(${dIdx})" class="p-1.5 text-gray-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                <button onclick="openItemModal(${dIdx})" class="ml-1 bg-sky-50 text-sky-600 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5 mr-1"></i> 新增
+                                </button>
+                            </div>
+                        </div>
+                        <div class="space-y-5">
+                            ${(day.items || []).map((item, iIdx) => `
+                                <div class="flex gap-3 group relative">
+                                    <div class="text-[11px] font-bold text-sky-400 w-10 pt-1 tracking-tighter">${item.time || 'ANY'}</div>
+                                    <div class="flex-1 pr-12">
+                                        <p class="text-sm text-gray-800 leading-snug ${item.important ? 'font-bold text-rose-600' : ''}">${item.content}</p>
+                                        ${item.note ? `<div class="mt-1.5 p-2 bg-slate-50 border border-slate-100 rounded-lg text-xs text-gray-500 leading-relaxed">${item.note}</div>` : ''}
+                                    </div>
+                                    <div class="flex flex-col gap-0.5 items-center">
+                                        ${iIdx > 0 ? `<button onclick="moveScheduleItem(${dIdx}, ${iIdx}, -1)" class="order-btn p-0.5"><i data-lucide="chevron-up" class="w-3.5 h-3.5"></i></button>` : ''}
+                                        <button onclick="openItemModal(${dIdx}, ${iIdx})" class="p-1 text-sky-400">
+                                            <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                        <button onclick="deleteScheduleItem(${dIdx}, ${iIdx})" class="p-1 text-gray-300">
+                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                        </button>
+                                        ${iIdx < (day.items.length - 1) ? `<button onclick="moveScheduleItem(${dIdx}, ${iIdx}, 1)" class="order-btn p-0.5"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderChecklist(categories) {
+            const container = document.getElementById('checklist-container');
+            container.innerHTML = categories.map((cat, catIdx) => `
+                <div class="glass-card rounded-2xl p-5 shadow-sm">
+                    <div class="flex items-center justify-between mb-4 pb-2 border-b border-sky-50">
+                        <div class="flex items-center text-sky-800 font-bold">
+                            <i data-lucide="${cat.icon || 'package'}" class="w-5 h-5 mr-2 text-sky-500"></i>
+                            <span class="text-sm">${cat.name}</span>
+                        </div>
+                        <div class="flex gap-1 items-center">
+                            ${catIdx > 0 ? `<button onclick="moveChecklistCategory(${catIdx}, -1)" class="order-btn"><i data-lucide="chevron-up" class="w-4 h-4"></i></button>` : ''}
+                            ${catIdx < categories.length - 1 ? `<button onclick="moveChecklistCategory(${catIdx}, 1)" class="order-btn"><i data-lucide="chevron-down" class="w-4 h-4"></i></button>` : ''}
+                            <button onclick="openCategoryModal(${catIdx})" class="text-sky-400 ml-1 p-1">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="deleteCategory(${catIdx})" class="text-gray-400 p-1">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-1">
+                        ${(cat.items || []).map((item, itemIdx) => `
+                            <div class="flex items-center py-2 group">
+                                <input type="checkbox" id="chk-${catIdx}-${itemIdx}" 
+                                    class="checkbox-custom rounded-md border-gray-300 text-sky-600 focus:ring-sky-500"
+                                    ${item.checked ? 'checked' : ''} 
+                                    onchange="toggleCheckItem(${catIdx}, ${itemIdx}, this.checked)">
+                                <label for="chk-${catIdx}-${itemIdx}" class="ml-3 text-sm text-gray-700 flex-1 py-1">
+                                    ${item.name}
+                                </label>
+                                <div class="flex items-center gap-0.5 ml-2">
+                                    ${itemIdx > 0 ? `<button onclick="moveChecklistItem(${catIdx}, ${itemIdx}, -1)" class="order-btn p-1"><i data-lucide="chevron-up" class="w-3.5 h-3.5"></i></button>` : ''}
+                                    ${itemIdx < (cat.items.length - 1) ? `<button onclick="moveChecklistItem(${catIdx}, ${itemIdx}, 1)" class="order-btn p-1"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>` : ''}
+                                    <button onclick="editChecklistItem(${catIdx}, ${itemIdx})" class="text-sky-300 ml-1 p-1">
+                                        <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                    <button onclick="deleteChecklistItem(${catIdx}, ${itemIdx})" class="text-gray-300 p-1">
+                                        <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                        <div class="flex items-center mt-3 pt-2 border-t border-dashed border-sky-100">
+                            <input type="text" id="add-item-in-${catIdx}" placeholder="新增打包項目..." 
+                                class="flex-1 bg-transparent text-xs outline-none text-sky-700 py-2"
+                                onkeypress="if(event.key === 'Enter') addChecklistItem(${catIdx})">
+                            <button onclick="addChecklistItem(${catIdx})" class="text-sky-500 p-2"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Ordering Logic ---
+
+        window.moveScheduleDay = async (idx, direction) => {
+            const newIdx = idx + direction;
+            if (newIdx < 0 || newIdx >= globalData.schedule.length) return;
+            const temp = globalData.schedule[idx];
+            globalData.schedule[idx] = globalData.schedule[newIdx];
+            globalData.schedule[newIdx] = temp;
+            await saveToCloud();
+        };
+
+        window.moveScheduleItem = async (dIdx, iIdx, direction) => {
+            const newIdx = iIdx + direction;
+            const items = globalData.schedule[dIdx].items;
+            if (newIdx < 0 || newIdx >= items.length) return;
+            const temp = items[iIdx];
+            items[iIdx] = items[newIdx];
+            items[newIdx] = temp;
+            await saveToCloud();
+        };
+
+        window.moveChecklistCategory = async (idx, direction) => {
+            const newIdx = idx + direction;
+            if (newIdx < 0 || newIdx >= globalData.checklist.length) return;
+            const temp = globalData.checklist[idx];
+            globalData.checklist[idx] = globalData.checklist[newIdx];
+            globalData.checklist[newIdx] = temp;
+            await saveToCloud();
+        };
+
+        window.moveChecklistItem = async (cIdx, iIdx, direction) => {
+            const newIdx = iIdx + direction;
+            const items = globalData.checklist[cIdx].items;
+            if (newIdx < 0 || newIdx >= items.length) return;
+            const temp = items[iIdx];
+            items[iIdx] = items[newIdx];
+            items[newIdx] = temp;
+            await saveToCloud();
+        };
+
+        // --- Other Interaction Logic ---
+
+        window.openItemModal = (dIdx, iIdx = null) => {
+            document.body.classList.add('modal-open');
+            const modal = document.getElementById('item-modal');
+            const title = document.getElementById('item-modal-title');
+            const saveBtn = document.getElementById('modal-save-btn');
+
+            if (iIdx !== null) {
+                const item = globalData.schedule[dIdx].items[iIdx];
+                document.getElementById('modal-time').value = item.time || '';
+                document.getElementById('modal-content').value = item.content || '';
+                document.getElementById('modal-note').value = item.note || '';
+                document.getElementById('modal-important').checked = item.important || false;
+                title.innerText = "編輯行程項目";
+                saveBtn.innerText = "更新行程";
+                saveBtn.onclick = () => saveScheduleItem(dIdx, iIdx);
+            } else {
+                document.getElementById('modal-time').value = '';
+                document.getElementById('modal-content').value = '';
+                document.getElementById('modal-note').value = '';
+                document.getElementById('modal-important').checked = false;
+                title.innerText = "新增行程項目";
+                saveBtn.innerText = "儲存行程";
+                saveBtn.onclick = () => saveScheduleItem(dIdx);
+            }
+            modal.classList.add('active');
+            lucide.createIcons();
+        };
+
+        async function saveScheduleItem(dIdx, iIdx = null) {
+            const time = document.getElementById('modal-time').value;
+            const content = document.getElementById('modal-content').value;
+            const note = document.getElementById('modal-note').value;
+            const important = document.getElementById('modal-important').checked;
+            if(!content) return;
+
+            const newItem = { time, content, note, important };
+            if (iIdx !== null) {
+                globalData.schedule[dIdx].items[iIdx] = newItem;
+            } else {
+                globalData.schedule[dIdx].items.push(newItem);
+            }
+            await saveToCloud();
+            closeModal();
+        }
+
+        window.deleteScheduleItem = async (dIdx, iIdx) => {
+            if(!confirm('刪除這項行程？')) return;
+            globalData.schedule[dIdx].items.splice(iIdx, 1);
+            await saveToCloud();
+        };
+
+        window.openDayModal = (dIdx = null) => {
+            document.body.classList.add('modal-open');
+            const modal = document.getElementById('day-modal');
+            const title = document.getElementById('day-modal-title');
+            const saveBtn = document.getElementById('day-modal-save-btn');
+
+            if (dIdx !== null) {
+                const day = globalData.schedule[dIdx];
+                document.getElementById('day-date').value = day.date || '';
+                document.getElementById('day-title').value = day.title || '';
+                title.innerText = "編輯日期分段";
+                saveBtn.onclick = () => saveDay(dIdx);
+            } else {
+                document.getElementById('day-date').value = '';
+                document.getElementById('day-title').value = '';
+                title.innerText = "新增日期分段";
+                saveBtn.onclick = () => saveDay();
+            }
+            modal.classList.add('active');
+        };
+
+        async function saveDay(dIdx = null) {
+            const date = document.getElementById('day-date').value;
+            const title = document.getElementById('day-title').value;
+            if(!date) return;
+
+            if (dIdx !== null) {
+                globalData.schedule[dIdx].date = date;
+                globalData.schedule[dIdx].title = title;
+            } else {
+                globalData.schedule.push({ date, title, items: [] });
+            }
+            await saveToCloud();
+            closeModal();
+        }
+
+        window.deleteDay = async (idx) => {
+            if(!confirm('刪除這一天嗎？')) return;
+            globalData.schedule.splice(idx, 1);
+            await saveToCloud();
+        };
+
+        window.openCategoryModal = (catIdx = null) => {
+            document.body.classList.add('modal-open');
+            const modal = document.getElementById('category-modal');
+            const title = document.getElementById('category-modal-title');
+            const saveBtn = document.getElementById('category-modal-save-btn');
+
+            if (catIdx !== null) {
+                const cat = globalData.checklist[catIdx];
+                document.getElementById('cat-name').value = cat.name || '';
+                document.getElementById('cat-icon').value = cat.icon || 'package';
+                setCatIcon(cat.icon || 'package');
+                title.innerText = "編輯類別區塊";
+                saveBtn.onclick = () => saveCategory(catIdx);
+            } else {
+                document.getElementById('cat-name').value = '';
+                document.getElementById('cat-icon').value = 'package';
+                setCatIcon('package');
+                title.innerText = "新增類別區塊";
+                saveBtn.onclick = () => saveCategory();
+            }
+            modal.classList.add('active');
+        };
+
+        async function saveCategory(catIdx = null) {
+            const name = document.getElementById('cat-name').value;
+            const icon = document.getElementById('cat-icon').value;
+            if(!name) return;
+            if(!globalData.checklist) globalData.checklist = [];
+
+            if (catIdx !== null) {
+                globalData.checklist[catIdx].name = name;
+                globalData.checklist[catIdx].icon = icon;
+            } else {
+                globalData.checklist.push({ name, icon, items: [] });
+            }
+            await saveToCloud();
+            closeModal();
+        }
+
+        window.deleteCategory = async (idx) => {
+            if(!confirm('確定要刪除整個類別嗎？')) return;
+            globalData.checklist.splice(idx, 1);
+            await saveToCloud();
+        };
+
+        window.editChecklistItem = async (catIdx, itemIdx) => {
+            const currentName = globalData.checklist[catIdx].items[itemIdx].name;
+            const newName = prompt("編輯項目名稱:", currentName);
+            if (newName !== null && newName.trim() !== "") {
+                globalData.checklist[catIdx].items[itemIdx].name = newName.trim();
+                await saveToCloud();
+            }
+        };
+
+        window.toggleCheckItem = async (cIdx, iIdx, checked) => {
+            globalData.checklist[cIdx].items[iIdx].checked = checked;
+            await saveToCloud();
+        };
+
+        window.addChecklistItem = async (cIdx) => {
+            const input = document.getElementById(`add-item-in-${cIdx}`);
+            const name = input.value.trim();
+            if(!name) return;
+            globalData.checklist[cIdx].items.push({ name, checked: false });
+            input.value = '';
+            await saveToCloud();
+        };
+
+        window.deleteChecklistItem = async (cIdx, iIdx) => {
+            globalData.checklist[cIdx].items.splice(iIdx, 1);
+            await saveToCloud();
+        };
+
+        window.closeModal = () => {
+            document.body.classList.remove('modal-open');
+            document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+        };
+
+        window.setCatIcon = (icon) => {
+            document.getElementById('cat-icon').value = icon;
+            document.querySelectorAll('.icon-btn').forEach(b => {
+                b.classList.remove('bg-sky-100', 'border-sky-500');
+                if (b.dataset.icon === icon) b.classList.add('bg-sky-100', 'border-sky-500');
+            });
+        };
+
+        async function saveToCloud() {
+            try {
+                const docRef = doc(db, ...DATA_PATH);
+                await setDoc(docRef, globalData);
+            } catch (e) { console.error("雲端存取失敗:", e); }
+        }
+
+        window.switchTab = (tab) => {
+            const isSch = tab === 'schedule';
+            document.getElementById('view-schedule').classList.toggle('hidden', !isSch);
+            document.getElementById('view-checklist').classList.toggle('hidden', isSch);
+            document.getElementById('tab-schedule').className = isSch ? 'flex-1 py-4 text-center text-sm font-medium transition-all tab-active' : 'flex-1 py-4 text-center text-sm font-medium transition-all text-gray-400';
+            document.getElementById('tab-checklist').className = !isSch ? 'flex-1 py-4 text-center text-sm font-medium transition-all tab-active' : 'flex-1 py-4 text-center text-sm font-medium transition-all text-gray-400';
+            lucide.createIcons();
+        };
+
+        function showErrorMessage(msg) {
+            document.getElementById('loading-text').innerHTML = `<span class="text-rose-500">${msg}</span>`;
+        }
+    </script>
+</body>
+</html>
