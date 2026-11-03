@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2026 濟州島孝親溫馨之旅 5天4夜行程手冊</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts: Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans TC"', 'sans-serif'],
+          },
+          colors: {
+            jeju: {
+              orange: '#FF7A00',
+              deeporange: '#E05800',
+              blue: '#0284C7',
+              navy: '#0F172A',
+              card: '#FFFFFF'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      background-color: #F8FAFC;
+    }
+    
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background-color: #FFFFFF !important;
+        font-size: 13pt !important;
+      }
+      .page-break {
+        page-break-after: always;
+      }
+    }
+
+    /* 編輯模式高亮邊框 */
+    .editing-active [contenteditable="true"] {
+      outline: 2px dashed #FF7A00;
+      background-color: #FFFBEB;
+      padding: 3px 6px;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+    .editing-active [contenteditable="true"]:focus {
+      background-color: #FEF3C7;
+      outline: 2px solid #EA580C;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="text-slate-800 text-base md:text-lg flex flex-col min-h-screen">
+
+  <!-- 頂部導航與長輩輔助工具列 (Fixed Top) -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-orange-100 shadow-sm no-print">
+    <div class="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
+      <!-- 標題與雲端狀態 -->
+      <div class="flex items-center space-x-2">
+        <span class="bg-orange-500 text-white font-black px-2.5 py-1 rounded-lg text-sm tracking-wide">
+          <i class="fa-solid fa-plane-departure mr-1"></i> JEJU
+        </span>
+        <h1 class="font-extrabold text-slate-800 text-lg md:text-xl tracking-tight">濟州島家庭旅遊手冊</h1>
+        
+        <!-- 雲端同步狀態標籤 -->
+        <span id="cloudStatusBadge" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+          <span class="w-2 h-2 rounded-full bg-slate-400" id="cloudStatusDot"></span>
+          <span id="cloudStatusText">未連線</span>
+        </span>
+      </div>
+
+      <!-- 長輩貼心功能與兄弟編輯入口 -->
+      <div class="flex items-center space-x-2">
+        <!-- 字體放大按鈕 (超適合爸媽) -->
+        <button onclick="toggleFontSize()" title="調整字體大小" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full text-sm font-bold flex items-center transition">
+          <i class="fa-solid fa-text-height mr-1.5 text-orange-600"></i>
+          <span id="fontBtnText">字體: 標準</span>
+        </button>
+
+        <!-- 一鍵友善列印 -->
+        <button onclick="window.print()" title="列印紙本手冊" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full text-sm font-bold flex items-center transition">
+          <i class="fa-solid fa-print mr-1"></i> 列印
+        </button>
+
+        <!-- 兄弟專屬編輯開關 -->
+        <button id="adminToggleBtn" onclick="handleAdminToggle()" class="bg-orange-100 hover:bg-orange-200 text-orange-800 px-3.5 py-1.5 rounded-full text-sm font-bold flex items-center transition border border-orange-300 shadow-sm">
+          <i class="fa-solid fa-lock mr-1.5" id="adminIcon"></i>
+          <span id="adminBtnText">登入編輯</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 編輯狀態專用控制條 (管理模式下顯示) -->
+    <div id="adminStatusBar" class="hidden bg-gradient-to-r from-amber-600 to-orange-600 text-white px-4 py-2 text-sm font-medium transition-all shadow-md">
+      <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center space-x-2">
+          <i class="fa-solid fa-pen-to-square animate-bounce"></i>
+          <span>【兄弟編輯模式】直接點擊文字即可修改，完成後點選「立即同步到雲端」！</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="saveAndSyncToCloud()" class="bg-white text-orange-700 px-3.5 py-1 rounded-lg text-xs font-bold hover:bg-orange-50 shadow transition flex items-center gap-1">
+            <i class="fa-solid fa-cloud-arrow-up"></i> 立即同步到雲端
+          </button>
+          <button onclick="exitAdmin()" class="bg-slate-900 text-white px-3 py-1 rounded-lg text-xs font-semibold hover:bg-black transition">
+            完成關閉
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 天數快捷導航錨點 -->
+    <nav class="bg-orange-50/80 border-t border-orange-200/60 overflow-x-auto no-scrollbar">
+      <div class="max-w-5xl mx-auto px-3 py-2 flex space-x-2 text-sm md:text-base font-bold whitespace-nowrap">
+        <a href="#section-flight" class="px-3 py-1 bg-white rounded-lg border border-orange-200 text-orange-950 hover:bg-orange-100 transition shadow-sm">
+          ✈️ 航班資訊
+        </a>
+        <a href="#section-prep" class="px-3 py-1 bg-white rounded-lg border border-orange-200 text-orange-950 hover:bg-orange-100 transition shadow-sm">
+          🎒 行前準備
+        </a>
+        <a href="#day1" class="px-3.5 py-1 bg-white rounded-lg border border-orange-200 text-orange-950 hover:bg-orange-500 hover:text-white transition shadow-sm">
+          D1 (11/11 週三)
+        </a>
+        <a href="#day2" class="px-3.5 py-1 bg-white rounded-lg border border-orange-200 text-orange-950 hover:bg-orange-500 hover:text-white transition shadow-sm">
+          D2 (11/12 週四)
+        </a>
+        <a href="#day3" class="px-3.5 py-1 bg-white rounded-lg border border-orange-200 text-orange-950 hover:bg-orange-500 hover:text-white transition shadow-sm">
+          D3 (11/13 週五)
+        </a>
+        <a href="#day4" class="px-3.5 py-1 bg-white rounded-lg border border-orange-200 text-orange-950 hover:bg-orange-500 hover:text-white transition shadow-sm">
+          D4 (11/14 週六)
+        </a>
+        <a href="#day5" class="px-3.5 py-1 bg-white rounded-lg border border-orange-200 text-orange-950 hover:bg-orange-500 hover:text-white transition shadow-sm">
+          D5 (11/15 週日)
+        </a>
+        <a href="#section-traffic" class="px-3 py-1 bg-white rounded-lg border border-blue-200 text-blue-900 hover:bg-blue-100 transition shadow-sm">
+          🚢 牛島搭船攻略
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- 主內容容器 -->
+  <main class="max-w-5xl mx-auto px-4 py-6 flex-grow space-y-8 w-full" id="itineraryContainer">
+
+    <!-- 主視覺橫幅：旅行社風格精裝封面 -->
+    <div class="relative rounded-3xl overflow-hidden shadow-xl bg-slate-900 text-white min-h-[220px] md:min-h-[260px] flex items-end p-6 md:p-8">
+      <img src="https://images.unsplash.com/photo-1548115184-bc6544d06a58?q=80&w=1200&auto=format&fit=crop" 
+           alt="Jeju Island Landscape" 
+           class="absolute inset-0 w-full h-full object-cover opacity-60">
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent"></div>
+      
+      <div class="relative z-10 w-full flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-2 bg-orange-600/90 text-white text-xs md:text-sm font-bold px-3 py-1 rounded-full mb-2.5 backdrop-blur-sm">
+            <i class="fa-solid fa-umbrella-beach"></i> 濟州島自由行 · 暖心孝親版
+          </div>
+          <h2 class="text-2xl md:text-4xl font-black tracking-tight drop-shadow-md">
+            2026 濟州島 5 天 4 夜家族旅行
+          </h2>
+          <p class="text-orange-200 text-sm md:text-base font-medium mt-1">
+            成員：忠岳 & 沛洪 & 爸爸媽媽（慢活度假、美食饗宴、壯麗海景）
+          </p>
+        </div>
+        <div class="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/20 text-center min-w-[155px]">
+          <span class="block text-xs text-orange-200">旅遊日期</span>
+          <span class="text-lg md:text-xl font-black text-white">11/11 - 11/15</span>
+          <span class="block text-xs text-slate-300">氣候約 12°C~18°C 舒適宜人</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 區塊一：航班資訊對照表 (長輩一眼看懂) -->
+    <section id="section-flight" class="scroll-mt-28">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xl md:text-2xl font-black text-slate-900 flex items-center">
+          <span class="bg-blue-600 text-white w-8 h-8 rounded-xl inline-flex items-center justify-center mr-2 text-sm shadow">
+            <i class="fa-solid fa-plane"></i>
+          </span>
+          航班資訊對照表
+        </h3>
+        <span class="text-xs md:text-sm font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+          濟州快台灣 1 小時 (GMT+9)
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 高雄組：忠岳 & 爸媽 -->
+        <div class="bg-white rounded-2xl p-5 border-2 border-orange-200 shadow-md relative overflow-hidden">
+          <div class="absolute top-0 right-0 bg-orange-500 text-white text-xs font-black px-3 py-1 rounded-bl-xl shadow-sm">
+            高雄出發組
+          </div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl">👨‍👩‍👦</span>
+            <div>
+              <h4 class="font-bold text-slate-800 text-lg">忠岳 & 爸爸媽媽</h4>
+              <p class="text-xs text-slate-500">高雄小港 (KHH) 往返</p>
+            </div>
+          </div>
+
+          <div class="space-y-3 bg-orange-50/60 p-3.5 rounded-xl border border-orange-100 text-sm">
+            <div class="flex items-center justify-between border-b border-orange-200/50 pb-2">
+              <div>
+                <span class="bg-orange-600 text-white text-[11px] font-bold px-1.5 py-0.5 rounded">去程 11/11 (週三)</span>
+                <p class="text-base font-bold text-slate-800 mt-1">16:00 <span class="text-xs text-slate-500">小港 KHH</span></p>
+              </div>
+              <div class="text-center px-2">
+                <i class="fa-solid fa-arrow-right text-orange-400"></i>
+                <div class="text-[10px] text-slate-400">2小時30分</div>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-slate-500">抵達濟州</span>
+                <p class="text-base font-black text-orange-600 mt-1">19:30 <span class="text-xs text-slate-600">濟州 CJU</span></p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <div>
+                <span class="bg-slate-700 text-white text-[11px] font-bold px-1.5 py-0.5 rounded">回程 11/15 (週日)</span>
+                <p class="text-base font-bold text-slate-800 mt-1">11:05 <span class="text-xs text-slate-500">濟州 CJU</span></p>
+              </div>
+              <div class="text-center px-2">
+                <i class="fa-solid fa-arrow-right text-slate-400"></i>
+                <div class="text-[10px] text-slate-400">2小時35分</div>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-slate-500">抵達小港</span>
+                <p class="text-base font-bold text-slate-800 mt-1">12:40 <span class="text-xs text-slate-600">小港 KHH</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 台北組：沛洪 -->
+        <div class="bg-white rounded-2xl p-5 border-2 border-blue-200 shadow-md relative overflow-hidden">
+          <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-bl-xl shadow-sm">
+            台北出發組
+          </div>
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-2xl">🙋‍♂️</span>
+            <div>
+              <h4 class="font-bold text-slate-800 text-lg">沛洪</h4>
+              <p class="text-xs text-slate-500">台北桃園 (TPE) 往返</p>
+            </div>
+          </div>
+
+          <div class="space-y-3 bg-blue-50/60 p-3.5 rounded-xl border border-blue-100 text-sm">
+            <div class="flex items-center justify-between border-b border-blue-200/50 pb-2">
+              <div>
+                <span class="bg-blue-600 text-white text-[11px] font-bold px-1.5 py-0.5 rounded">去程 11/11 (週三)</span>
+                <p class="text-base font-bold text-slate-800 mt-1">14:25 <span class="text-xs text-slate-500">桃機 TPE</span></p>
+              </div>
+              <div class="text-center px-2">
+                <i class="fa-solid fa-arrow-right text-blue-400"></i>
+                <div class="text-[10px] text-slate-400">早2小時辦理取車</div>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-slate-500">抵達濟州</span>
+                <p class="text-base font-black text-blue-600 mt-1">17:25 <span class="text-xs text-slate-600">濟州 CJU</span></p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <div>
+                <span class="bg-slate-700 text-white text-[11px] font-bold px-1.5 py-0.5 rounded">回程 11/15 (週日)</span>
+                <p class="text-base font-bold text-slate-800 mt-1">12:05 <span class="text-xs text-slate-500">濟州 CJU</span></p>
+              </div>
+              <div class="text-center px-2">
+                <i class="fa-solid fa-arrow-right text-slate-400"></i>
+                <div class="text-[10px] text-slate-400">返抵桃園</div>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-slate-500">抵達桃機</span>
+                <p class="text-base font-bold text-slate-800 mt-1">13:40 <span class="text-xs text-slate-600">桃機 TPE</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 區塊二：行前準備與隨身檢核 -->
+    <section id="section-prep" class="bg-white rounded-2xl p-5 border border-slate-200 shadow-md scroll-mt-28">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl md:text-2xl font-black text-slate-900 flex items-center">
+          <span class="bg-amber-500 text-white w-8 h-8 rounded-xl inline-flex items-center justify-center mr-2 text-sm shadow">
+            <i class="fa-solid fa-clipboard-check"></i>
+          </span>
+          行前準備與必備證件檢核
+        </h3>
+        <span class="text-xs text-slate-500">點選核取方塊即時存檔</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm md:text-base" id="prepChecklist">
+        <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-orange-50 cursor-pointer transition">
+          <input type="checkbox" data-chk-id="0" class="w-5 h-5 rounded text-orange-600 focus:ring-orange-500 mr-2.5">
+          <span class="font-medium text-slate-800">簽證/入境申報 (72h前)</span>
+        </label>
+        <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-orange-50 cursor-pointer transition">
+          <input type="checkbox" data-chk-id="1" class="w-5 h-5 rounded text-orange-600 focus:ring-orange-500 mr-2.5">
+          <span class="font-medium text-slate-800">韓元現鈔 / WOWPASS</span>
+        </label>
+        <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-orange-50 cursor-pointer transition">
+          <input type="checkbox" data-chk-id="2" class="w-5 h-5 rounded text-orange-600 focus:ring-orange-500 mr-2.5">
+          <span class="font-medium text-slate-800">eSIM / 漫遊網路</span>
+        </label>
+        <label class="flex items-center p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-orange-50 cursor-pointer transition">
+          <input type="checkbox" data-chk-id="3" class="w-5 h-5 rounded text-orange-600 focus:ring-orange-500 mr-2.5">
+          <span class="font-medium text-slate-800">海外旅遊平安保險</span>
+        </label>
+        <label class="flex items-center p-3 rounded-xl border-2 border-emerald-300 bg-emerald-50 cursor-pointer">
+          <input type="checkbox" checked data-chk-id="4" class="w-5 h-5 rounded text-emerald-600 focus:ring-emerald-500 mr-2.5">
+          <span class="font-bold text-emerald-900">護照本體 (效期6月+)</span>
+        </label>
+        <label class="flex items-center p-3 rounded-xl border-2 border-emerald-300 bg-emerald-50 cursor-pointer">
+          <input type="checkbox" checked data-chk-id="5" class="w-5 h-5 rounded text-emerald-600 focus:ring-emerald-500 mr-2.5">
+          <span class="font-bold text-emerald-900">台灣汽車駕照正本</span>
+        </label>
+        <label class="flex items-center p-3 rounded-xl border-2 border-emerald-300 bg-emerald-50 cursor-pointer">
+          <input type="checkbox" checked data-chk-id="6" class="w-5 h-5 rounded text-emerald-600 focus:ring-emerald-500 mr-2.5">
+          <span class="font-bold text-emerald-900">國際駕照 (IDP)</span>
+        </label>
+        <label class="flex items-center p-3 rounded-xl border-2 border-emerald-300 bg-emerald-50 cursor-pointer">
+          <input type="checkbox" checked data-chk-id="7" class="w-5 h-5 rounded text-emerald-600 focus:ring-emerald-500 mr-2.5">
+          <span class="font-bold text-emerald-900">租車預訂憑證</span>
+        </label>
+      </div>
+
+      <div class="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-sm">
+        <p class="font-bold flex items-center"><i class="fa-solid fa-car mr-2 text-amber-600"></i> 自駕導航注意事項：</p>
+        <p class="mt-1 leading-relaxed">
+          韓國與台灣同為<strong>左駕靠右行駛</strong>。在韓國 Google Maps 無法行車導航，推薦下載 <strong>Naver Map</strong> 或 <strong>KakaoMap</strong>，只要輸入店家的電話號碼即可快速定位導航！
+        </p>
+      </div>
+    </section>
+
+    <!-- 區塊三：每日行程 (全部支援雲端即時同步) -->
+    <div class="space-y-8" id="dailyItineraryWrap">
+
+      <!-- ==================== DAY 1 ==================== -->
+      <section id="day1" class="day-card bg-white rounded-3xl p-5 md:p-7 border border-slate-200 shadow-lg scroll-mt-28">
+        <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-4 py-1.5 rounded-2xl text-lg shadow">
+              Day 1
+            </span>
+            <div>
+              <h3 class="text-xl md:text-2xl font-black text-slate-800">11/11 (週三) 啟程出發 · 濟州相會與熟成黑豬肉盛宴</h3>
+              <p class="text-xs md:text-sm text-slate-500 font-medium">抵達出關 · 機場取車 · 市區旅店 Check-in</p>
+            </div>
+          </div>
+          <span class="text-sm font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
+            宿：市區 Mir Guesthouse
+          </span>
+        </div>
+
+        <div class="mt-6 space-y-6">
+          <!-- 下午 -->
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm shadow-sm">
+                下午
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded">機場會合</span>
+                <h4 class="font-bold text-base md:text-lg text-slate-800 editable-item" data-field="d1_item1_title">台韓兩地出發 · 濟州國際機場 (CJU) 集合</h4>
+              </div>
+              <div class="text-sm text-slate-600 mt-2 space-y-1 editable-item" data-field="d1_item1_desc">
+                <p>• <strong>17:25</strong> 沛洪抵達濟州，先取好網路交通卡並至租車公司櫃檯完成辦理手續。</p>
+                <p>• <strong>19:30</strong> 忠岳與爸媽搭乘高雄航班抵達，出關後由沛洪在機場大廳接機，全家平安相聚！</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 入住 -->
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shadow-sm">
+                20:00
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 bg-indigo-600 text-white text-xs font-bold rounded">🛏️ Check-in</span>
+                <h4 class="font-bold text-base md:text-lg text-slate-800 editable-item" data-field="d1_item2_title">市區入住：Mir Guesthouse (米爾旅館)</h4>
+              </div>
+              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d1_item2_desc">
+                位於濟州市區（鄰近龍頭岩），外觀如現代潛水艇，已於 Booking.com 預訂完成。先讓爸媽放行李、洗把臉準備出門享受烤肉！
+              </p>
+            </div>
+          </div>
+
+          <!-- 晚餐 -->
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-bold text-sm shadow">
+                20:30
+              </span>
+            </div>
+            <div class="flex-grow bg-orange-50/70 p-5 rounded-2xl border-2 border-orange-200 shadow-sm">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="px-2.5 py-0.5 bg-orange-600 text-white text-xs font-black rounded-full">🍛 預約晚餐盛宴</span>
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">已訂位 20:30</span>
+              </div>
+              <h4 class="font-black text-xl text-slate-900 mt-2 editable-item" data-field="d1_item3_title">熟成到 濟州本店 (Suksungdo 숙성도 노형본점)</h4>
+              <p class="text-sm text-slate-700 mt-1 leading-relaxed editable-item" data-field="d1_item3_desc">
+                濟州最具代表性的頂級熟成黑豬肉！專人桌邊代烤至外皮金黃香脆、肉質軟嫩多汁，牙口不好的長輩也能輕鬆入口。
+              </p>
+              
+              <div class="mt-3 p-3 bg-white rounded-xl border border-orange-200 text-xs md:text-sm text-slate-600">
+                <span class="font-bold text-orange-700"><i class="fa-solid fa-lightbulb"></i> 晚到備案：</span>
+                <span class="editable-item" data-field="d1_item3_backup">若班機出關排隊過久，可改吃濟州老字號<strong>「姊妹麵條 (자매국수)」</strong>，濃郁大骨高湯配軟嫩豬肉切片麵，暖胃舒坦。</span>
+              </div>
+
+              <div class="mt-3">
+                <a href="https://maps.google.com/?q=Suksungdo+Nohyeong+Jeju" target="_blank" class="inline-flex items-center bg-white px-3 py-1.5 rounded-lg border border-orange-300 text-orange-700 font-bold hover:bg-orange-100 transition shadow-sm text-xs">
+                  <i class="fa-solid fa-location-dot mr-1 text-red-500"></i> 開啟 Google 地圖定位
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== DAY 2 ==================== -->
+      <section id="day2" class="day-card bg-white rounded-3xl p-5 md:p-7 border border-slate-200 shadow-lg scroll-mt-28">
+        <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-4 py-1.5 rounded-2xl text-lg shadow">
+              Day 2
+            </span>
+            <div>
+              <h3 class="text-xl md:text-2xl font-black text-slate-800">11/12 (週四) 東岸海韻 · 人氣牛島遊船與城山日出峰</h3>
+              <p class="text-xs md:text-sm text-slate-500 font-medium">超人氣麵包 · 牛島跳島花生冰淇淋 · 必吃小鮑魚砂鍋</p>
+            </div>
+          </div>
+          <span class="text-sm font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
+            宿：東南邊度假別墅 (連住兩晚)
+          </span>
+        </div>
+
+        <div class="mt-6 space-y-6">
+          <!-- 早餐 -->
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm shadow-sm">
+                07:00
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <span class="px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded">🍳 朝食與潮流</span>
+              <h4 class="font-bold text-base md:text-lg text-slate-800 mt-1 editable-item" data-field="d2_item1_title">Audrant Bakery 爆漿大蒜麵包 & 倫敦貝果 / Blue Elephant</h4>
+              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d2_item1_desc">
+                至朝天邑咸德海邊人氣烘焙坊 <strong>Audrant Bakery</strong> 嚐招牌大蒜法包，順遊倫敦貝果博物館與 Blue Elephant 試戴潮流墨鏡。
+              </p>
+            </div>
+          </div>
+
+          <!-- 景點：牛島 -->
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center font-bold text-sm shadow">
+                上午
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="px-2 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">🏝️ 必遊跳島</span>
+                <span class="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded">船程僅 15 分鐘</span>
+              </div>
+              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1.5 editable-item" data-field="d2_item2_title">牛島 (Udo Island) 跳島探訪</h4>
+              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d2_item2_desc">
+                從「城山港」出發搭乘渡輪，欣賞清澈如翡翠的珊瑚沙海灘、品嚐牛島特產花生冰淇淋。可搭乘環島公車，爸媽免走遠路輕鬆遊覽。
+              </p>
+              
+              <div class="mt-3 rounded-xl overflow-hidden h-48 md:h-56 relative shadow">
+                <img src="https://images.unsplash.com/photo-1596401057633-54a8fe8ef647?q=80&w=800&auto=format&fit=crop" 
+                     alt="Udo Island" class="w-full h-full object-cover">
+                <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2.5 py-1 rounded-md backdrop-blur-sm">
+                  牛島碧海白沙實景
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 午餐 -->
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm shadow-sm">
+                12:30
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-orange-50/70 p-4 rounded-2xl border border-orange-200">
+              <span class="px-2 py-0.5 bg-orange-600 text-white text-xs font-bold rounded">🍛 海味午餐</span>
+              <h4 class="font-bold text-base md:text-lg text-slate-900 mt-1 editable-item" data-field="d2_item3_title">東部名店 · 小鮑魚餐廳 (오조해녀의집)</h4>
+              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d2_item3_desc">
+                回城山港後享用海女採集的新鮮鮑魚粥、香烤小鮑魚及熱騰騰的活海鮮砂鍋，湯頭溫潤鮮甜，最適合長輩調養體力。
+              </p>
+            </div>
+          </div>
+
+          <!-- 城山日出峰 -->
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow">
+                下午
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+              <span class="px-2 py-0.5 bg-emerald-600 text-white text-xs font-bold rounded">UNESCO 自然遺產</span>
+              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1.5 editable-item" data-field="d2_item4_title">城山日出峰 (Seongsan Ilchulbong)</h4>
+              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d2_item4_desc">
+                火山噴發形成宛如巨型皇冠。推薦帶爸媽走平緩寬敞的<strong>「左側免費海景步道」</strong>，既可飽覽壯麗海景與海女小屋，又完全不需費力爬陡階梯！
+              </p>
+
+              <div class="mt-3 rounded-xl overflow-hidden h-48 md:h-56 relative shadow">
+                <img src="https://images.unsplash.com/photo-1627916607164-7b20241db935?q=80&w=800&auto=format&fit=crop" 
+                     alt="Seongsan Ilchulbong" class="w-full h-full object-cover">
+                <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2.5 py-1 rounded-md backdrop-blur-sm">
+                  城山日出峰火山海岬實景
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 住宿 -->
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shadow-sm">
+                宿
+              </span>
+            </div>
+            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <span class="px-2 py-0.5 bg-indigo-600 text-white text-xs font-bold rounded">🛏️ 連住兩晚免搬行李</span>
+              <h4 class="font-bold text-base md:text-lg text-slate-900 mt-1 editable-item" data-field="d2_item5_title">入住東南邊渡假旅宿 (第一晚)</h4>
+              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d2_item5_desc">
+                晚餐在周邊悠閒享用暖胃湯飯或海鮮鍋，連住兩晚省去長輩每日收拾行李的疲累。
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== DAY 3 ==================== -->
+      <section id="day3" class="day-card bg-white rounded-3xl p-5 md:p-7 border border-slate-200 shadow-lg scroll-mt-28">
+        <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-4 py-1.5 rounded-2xl text-lg shadow">
+              Day 3
+            </span>
+            <div>
+              <h3 class="text-xl md:text-2xl font-black text-slate-800">11/13 (週五) 童趣綠意 · 銀白芒草海與傳統韓服留影</h3>
+              <p class="text-xs md:text-sm text-slate-500 font-medium">Snoopy Garden 森林漫步 · 山君不離芒草浪 · 民俗村全家福</p>
+            </div>
+          </div>
+          <span class="text-sm font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
+            宿：東南邊度假別墅
+          </span>
+        </div>
+
+        <div class="mt-6 space-y-6">
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center font-bold text-sm shadow">
+                上午
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+              <div>
+                <span class="px-2 py-0.5 bg-pink-500 text-white text-xs font-bold rounded">療癒大自然</span>
+                <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d3_item1_title">Snoopy Garden (史努比庭園)</h4>
+                <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d3_item1_desc">
+                  廣闊平緩的自然園區，散步道綠樹成蔭，隨處可見可愛逗趣的雕塑與花園造景，非常適合長輩散步拍照。
+                </p>
+                <div class="mt-2 rounded-xl overflow-hidden h-44 relative shadow">
+                  <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=800&auto=format&fit=crop" 
+                       alt="Snoopy Garden" class="w-full h-full object-cover">
+                  <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">史努比庭園實景</div>
+                </div>
+              </div>
+
+              <div class="border-t border-slate-100 pt-3">
+                <span class="px-2 py-0.5 bg-amber-600 text-white text-xs font-bold rounded">11月限定絕景</span>
+                <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d3_item2_title">山君不離 (Sangumburi 火山口)</h4>
+                <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d3_item2_desc">
+                  秋天濟州島最夢幻的銀白芒草花海！步道平緩寬敞，隨手一拍就是全家合影明信片。
+                </p>
+                <div class="mt-2 rounded-xl overflow-hidden h-44 relative shadow">
+                  <img src="https://images.unsplash.com/photo-1508873696983-2df5293cb395?q=80&w=800&auto=format&fit=crop" 
+                       alt="Sangumburi Reed Field" class="w-full h-full object-cover">
+                  <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">山君不離秋季芒草波浪實景</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center font-bold text-sm shadow">
+                下午
+              </span>
+            </div>
+            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+              <span class="px-2 py-0.5 bg-purple-600 text-white text-xs font-bold rounded">文化體驗 & 全家福拍攝</span>
+              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d3_item3_title">濟州民俗村 (城邑或表善) · 換穿韓服留影</h4>
+              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d3_item3_desc">
+                帶爸媽穿上正統韓服，在黑色玄武岩石牆與茅草屋前拍下溫馨全家福，留下難忘紀念。
+              </p>
+              <div class="mt-2 rounded-xl overflow-hidden h-44 relative shadow">
+                <img src="https://images.unsplash.com/photo-1583244532610-2a234e7c3eca?q=80&w=800&auto=format&fit=crop" 
+                     alt="Korean Folk Village" class="w-full h-full object-cover">
+                <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">民俗村傳統石牆與茅草屋</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== DAY 4 ==================== -->
+      <section id="day4" class="day-card bg-white rounded-3xl p-5 md:p-7 border border-slate-200 shadow-lg scroll-mt-28">
+        <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-4 py-1.5 rounded-2xl text-lg shadow">
+              Day 4
+            </span>
+            <div>
+              <h3 class="text-xl md:text-2xl font-black text-slate-800">11/14 (週六) 南岸壯麗瀑布 · 綠茶園與涯月金黃夕陽</h3>
+              <p class="text-xs md:text-sm text-slate-500 font-medium">烤整條白帶魚 · 正房瀑布 · 柱狀節理 · 匠人之家暖心火鍋</p>
+            </div>
+          </div>
+          <span class="text-sm font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            宿：森林景觀獨棟 Airbnb
+          </span>
+        </div>
+
+        <div class="mt-6 space-y-6">
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm shadow-sm">
+                08:30
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <span class="px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded">傳統市場</span>
+              <h4 class="font-bold text-base md:text-lg text-slate-800 editable-item" data-field="d4_item1_title">西歸浦每日偶來市場 (Seogwipo Maeil Olle Market)</h4>
+              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d4_item1_desc">
+                早晨逛熱鬧市場，品嚐現剝甜美濟州蜜柑、黑豬肉可樂餅、現榨柑橘果汁。
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center font-bold text-sm shadow">
+                上午
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+              <span class="px-2 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">南岸地質巡禮</span>
+              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item2_title">正房瀑布 / 柱狀節理帶 / 龍頭海岸</h4>
+              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d4_item2_desc">
+                亞洲唯一直接入海的正房瀑布，以及黑巧克力般的六角柱狀節理奇岩，視爸媽當日體力彈性安排參觀。
+              </p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                <div class="rounded-xl overflow-hidden h-40 relative shadow">
+                  <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=600&auto=format&fit=crop" 
+                       alt="Jeongbang Waterfall" class="w-full h-full object-cover">
+                  <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">正房瀑布直接衝入大海</div>
+                </div>
+                <div class="rounded-xl overflow-hidden h-40 relative shadow">
+                  <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600&auto=format&fit=crop" 
+                       alt="Jusangjeolli Cliff" class="w-full h-full object-cover">
+                  <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">大浦海岸柱狀節理奇岩</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm shadow-sm">
+                12:30
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-orange-50/70 p-4 rounded-2xl border-2 border-orange-200">
+              <span class="px-2 py-0.5 bg-orange-600 text-white text-xs font-black rounded">一公尺霸氣名菜</span>
+              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item3_title">整條烤白帶魚盛宴 · Galchiwang (갈치왕)</h4>
+              <p class="text-sm text-slate-700 mt-1 editable-item" data-field="d4_item3_desc">
+                近一米長的整尾烤白帶魚！店員貼心桌邊剔刺，肉質細嫩鮮美無刺，爸媽吃得安心又開心。
+              </p>
+              <div class="mt-2">
+                <a href="https://maps.google.com/?q=Galchiwang+Jeju" target="_blank" class="inline-flex items-center text-xs font-bold text-orange-700 bg-white px-2.5 py-1 rounded border border-orange-300 hover:bg-orange-100">
+                  <i class="fa-solid fa-map-location-dot mr-1"></i> Galchiwang 地圖導航
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow">
+                下午
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+              <div>
+                <span class="px-2 py-0.5 bg-emerald-700 text-white text-xs font-bold rounded">茶園與花海</span>
+                <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item4_title">Osulloc 綠茶博物館 & Manor Blanc (粉黛亂子草)</h4>
+                <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d4_item4_desc">
+                  品嚐香濃綠茶冰淇淋與年輪蛋糕，順遊欣賞盛開的粉紅花海。
+                </p>
+              </div>
+
+              <div class="border-t border-slate-100 pt-3">
+                <span class="px-2 py-0.5 bg-orange-500 text-white text-xs font-bold rounded">金黃夕陽名所</span>
+                <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item5_title">涯月咖啡街 (Aewol Handam) 金黃落日</h4>
+                <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d4_item5_desc">
+                  漫步漢潭海岸步道欣賞夕陽落入海平面，在海景咖啡廳享受悠閒午後時光。
+                </p>
+                <div class="mt-2 rounded-xl overflow-hidden h-44 relative shadow">
+                  <img src="https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?q=80&w=800&auto=format&fit=crop" 
+                       alt="Aewol Sunset" class="w-full h-full object-cover">
+                  <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">涯月海岸金黃日落實景</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 晚餐 -->
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-bold text-sm shadow">
+                18:30
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-orange-50/70 p-4 rounded-2xl border border-orange-200">
+              <span class="px-2 py-0.5 bg-orange-600 text-white text-xs font-black rounded">暖胃火鍋首選</span>
+              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item6_title">匠人之家 涯月本店 (장인의집)</h4>
+              <p class="text-sm text-slate-700 mt-1 editable-item" data-field="d4_item6_desc">
+                濃郁牛骨高湯、澎湃海鮮、四色手工大水餃（章魚、鮑魚、泡菜、黑豬肉），晚風吹拂下喝一碗熱湯格外幸福。
+              </p>
+              <div class="mt-2">
+                <a href="https://maps.google.com/?q=Jang-in-ui-jib+Aewol" target="_blank" class="inline-flex items-center text-xs font-bold text-orange-700 bg-white px-2.5 py-1 rounded border border-orange-300 hover:bg-orange-100">
+                  <i class="fa-solid fa-location-dot mr-1 text-red-500"></i> 匠人之家 涯月本店 Google 地圖
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 住宿 -->
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shadow-sm">
+                宿
+              </span>
+            </div>
+            <div class="flex-grow bg-emerald-50/80 p-4 rounded-2xl border-2 border-emerald-300">
+              <span class="px-2 py-0.5 bg-emerald-700 text-white text-xs font-bold rounded">Airbnb 獨棟包棟房源</span>
+              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item7_title">獨棟森林景觀房源 · 烤肉與營火時光</h4>
+              <p class="text-sm text-slate-700 mt-1 editable-item" data-field="d4_item7_desc">
+                濟州最後一晚入住森林庭院別墅，全家在營火旁吃水果聊天，為旅程畫下完美句點。
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== DAY 5 ==================== -->
+      <section id="day5" class="day-card bg-white rounded-3xl p-5 md:p-7 border border-slate-200 shadow-lg scroll-mt-28">
+        <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
+          <div class="flex items-center gap-3">
+            <span class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-4 py-1.5 rounded-2xl text-lg shadow">
+              Day 5
+            </span>
+            <div>
+              <h3 class="text-xl md:text-2xl font-black text-slate-800">11/15 (週日) 滿載回憶 · 平安賦歸溫暖回家</h3>
+              <p class="text-xs md:text-sm text-slate-500 font-medium">機場還車 · 免稅店伴手禮採買 · 登機返回台灣</p>
+            </div>
+          </div>
+          <span class="text-sm font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+            平安賦歸 ✈️
+          </span>
+        </div>
+
+        <div class="mt-6 space-y-6">
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">
+                08:30
+              </span>
+              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
+            </div>
+            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
+              <span class="px-2 py-0.5 bg-slate-700 text-white text-xs font-bold rounded">退房與還車</span>
+              <h4 class="font-bold text-base md:text-lg text-slate-800 editable-item" data-field="d5_item1_title">整理行囊退房，前往租車站完成還車手續</h4>
+              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d5_item1_desc">
+                檢查護照隨身物品，駕車至機場租車中心還車，搭乘接駁車至航廈辦理報到與免稅購物。
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="flex flex-col items-center">
+              <span class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow">
+                11:00
+              </span>
+            </div>
+            <div class="flex-grow bg-blue-50/70 p-4 rounded-2xl border border-blue-200">
+              <span class="px-2 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">濟州 CJU 出發</span>
+              <h4 class="font-bold text-base md:text-lg text-slate-900 mt-1 editable-item" data-field="d5_item2_title">登機返航 · 平安抵達小港與桃園</h4>
+              <div class="mt-2 text-sm text-slate-700 space-y-1 editable-item" data-field="d5_item2_desc">
+                <p>🛫 <strong>忠岳 & 爸媽：</strong>11:05 起飛，預計 12:40 抵達高雄小港機場。</p>
+                <p>🛫 <strong>沛洪：</strong>12:05 起飛，預計 13:40 抵達台北桃園機場。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- 區塊四：牛島搭船圖解教學 (長輩最安心) -->
+    <section id="section-traffic" class="bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-3xl p-6 md:p-8 border-2 border-blue-200 shadow-lg scroll-mt-28">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="bg-blue-600 text-white w-10 h-10 rounded-2xl inline-flex items-center justify-center text-lg shadow">
+          🚢
+        </span>
+        <div>
+          <h3 class="text-xl md:text-2xl font-black text-slate-900">牛島 (Udo) 搭船通關完全教學</h3>
+          <p class="text-xs md:text-sm text-blue-700 font-medium">出發港口、填表須知與停靠港口重要提醒</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mt-4">
+        <div class="bg-white p-4 rounded-2xl border border-blue-200 shadow-sm">
+          <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mb-2">1</div>
+          <h4 class="font-bold text-slate-800 text-base mb-1">城山港出發</h4>
+          <p class="text-slate-600 leading-relaxed">
+            前往<strong>「城山浦港綜合客運碼頭 (성산포항)」</strong>，購票大廳在圓頂建築內。航程約 15 分鐘，約每 30 分鐘一班船。
+          </p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-blue-200 shadow-sm">
+          <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mb-2">2</div>
+          <h4 class="font-bold text-slate-800 text-base mb-1">必填 2 份乘船申告書</h4>
+          <p class="text-slate-600 leading-relaxed">
+            購票前，桌上先拿<strong>「乘船申告書」</strong>填寫，<strong>去程、回程各需要一張（共兩份）</strong>。全家名字、出生年月日與護照備妥查驗。
+          </p>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl border border-blue-200 shadow-sm">
+          <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs mb-2">3</div>
+          <h4 class="font-bold text-slate-800 text-base mb-1">確認回程港口</h4>
+          <p class="text-slate-600 leading-relaxed">
+            牛島主要有<strong>「天津港」</strong>與<strong>「下牛木洞港」</strong>。兩處皆可搭船回城山港，請留意末班船時間（通常為 17:00 前）。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 區塊五：緊急聯絡手冊 -->
+    <section class="bg-white rounded-3xl p-6 border border-slate-200 shadow-md">
+      <h3 class="text-lg md:text-xl font-black text-slate-900 mb-3 flex items-center">
+        <i class="fa-solid fa-life-ring text-orange-500 mr-2"></i> 緊急求助與手指韓文
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <span class="text-xs text-slate-500 block">韓國觀光公社 24hr 中文翻譯</span>
+          <a href="tel:1330" class="font-bold text-blue-600 text-base">撥打 1330</a>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <span class="text-xs text-slate-500 block">駐韓國台北代表部 緊急專線</span>
+          <span class="font-bold text-slate-800">+82-10-9080-2761</span>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <span class="text-xs text-slate-500 block">報警 / 救護車</span>
+          <span class="font-bold text-slate-800">報警 112 / 救護車 119</span>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <span class="text-xs text-slate-500 block">洗手間手指韓文</span>
+          <span class="font-bold text-slate-800">화장실 어디예요? (在哪?)</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 頁腳 -->
+  <footer class="bg-slate-900 text-slate-400 py-6 text-center text-sm no-print mt-10">
+    <div class="max-w-5xl mx-auto px-4 space-y-2">
+      <p class="text-slate-300 font-bold">2026 忠岳 & 沛洪 孝親濟州島自由行 · 家族專屬記憶</p>
+      <p class="text-xs text-slate-500">
+        已支援 Firebase 雲端即時同步 · 跨裝置自動更新 · 可隨時列印成紙本手冊
+      </p>
+    </div>
+  </footer>
+
+
+  <!-- 通知 Toast 浮動條 (絕不使用 alert) -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center space-x-2 text-sm font-medium transform transition-all duration-300 translate-y-20 opacity-0 pointer-events-none">
+    <i class="fa-solid fa-circle-check text-emerald-400" id="toastIcon"></i>
+    <span id="toastMsg">通知訊息</span>
+  </div>
+
+  <!-- Firebase 11 模組化：Google 登入 + Firestore 即時同步 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDcteMBDxbipPnIe31mV03XTdpd9Hoyaoo",
+      authDomain: "travel-aa9da.firebaseapp.com",
+      projectId: "travel-aa9da",
+      storageBucket: "travel-aa9da.firebasestorage.app",
+      messagingSenderId: "294695887678",
+      appId: "1:294695887678:web:7e0f01891037ecd93d426f",
+      measurementId: "G-T4CNSG33E9"
+    };
+
+    const STORAGE_KEY_LOCAL = "JEJU_2024_ITINERARY_DATA";
+    const CHECKLIST_KEY = "JEJU_2024_CHECKLIST";
+    const WANT_EDIT_KEY = "JEJU_WANT_EDIT";
+    const TRIP_PATH = ['trips', 'jeju2024'];
+
+    let db = null, auth = null;
+    let currentUser = null;
+    let isEditing = false;
+    let currentFontSizeMode = 0;
+    let unsubscribeFirestore = null;
+    let baselineItems = {};      // 雲端最後一次套用到畫面後的內容（用來只送出有改的欄位）
+    let cloudHasItems = false;
+    let cloudChecklist = null;
+
+    function tripRef() { return doc(db, ...TRIP_PATH); }
+
+    function showToast(message, isSuccess = true) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = message;
+      document.getElementById('toastIcon').className = isSuccess
+        ? "fa-solid fa-circle-check text-emerald-400"
+        : "fa-solid fa-circle-exclamation text-amber-400";
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none'), 2800);
+    }
+
+    function updateCloudStatus(status, text) {
+      const dot = document.getElementById('cloudStatusDot');
+      document.getElementById('cloudStatusText').innerText = text;
+      dot.className = status === 'connected' ? 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse'
+                    : status === 'loading'   ? 'w-2 h-2 rounded-full bg-amber-500 animate-ping'
+                    :                          'w-2 h-2 rounded-full bg-slate-400';
+    }
+
+    function getCurrentDOMItems() {
+      const items = {};
+      document.querySelectorAll('.editable-item').forEach(el => {
+        const field = el.getAttribute('data-field');
+        if (field) items[field] = el.innerHTML.trim();
+      });
+      return items;
+    }
+
+    function applyDataToDOM(items) {
+      document.querySelectorAll('.editable-item').forEach(el => {
+        const field = el.getAttribute('data-field');
+        if (field && items[field] !== undefined) el.innerHTML = items[field];
+      });
+      baselineItems = getCurrentDOMItems();
+    }
+
+    // ---------- 行前準備勾選 ----------
+    function getChecklistState() {
+      const state = {};
+      document.querySelectorAll('#prepChecklist input[type="checkbox"]').forEach(b => {
+        state[b.getAttribute('data-chk-id')] = b.checked;
+      });
+      return state;
+    }
+    function applyChecklistToDOM(state) {
+      document.querySelectorAll('#prepChecklist input[type="checkbox"]').forEach(b => {
+        const id = b.getAttribute('data-chk-id');
+        if (state && state[id] !== undefined) b.checked = state[id];
+      });
+    }
+    function applyLocalChecklist() {
+      try {
+        const saved = localStorage.getItem(CHECKLIST_KEY);
+        if (saved) applyChecklistToDOM(JSON.parse(saved));
+      } catch (e) {}
+    }
+    function bindChecklistEvents() {
+      document.querySelectorAll('#prepChecklist input[type="checkbox"]').forEach(b => {
+        b.addEventListener('change', async () => {
+          const state = getChecklistState();
+          localStorage.setItem(CHECKLIST_KEY, JSON.stringify(state));
+          // 只有登入的編輯者才會同步勾選狀態到雲端；其他人（爸媽）勾選只存在自己的裝置
+          if (db && currentUser) {
+            try { await setDoc(tripRef(), { checklist: state }, { merge: true }); }
+            catch (e) { console.warn("勾選狀態未同步到雲端", e); }
+          }
+        });
+      });
+    }
+
+    // ---------- 本機快取 ----------
+    function loadSavedLocalContent() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_LOCAL);
+        if (saved) applyDataToDOM(JSON.parse(saved));
+      } catch (e) { console.error("載入本地快取失敗", e); }
+      applyLocalChecklist();
+    }
+
+    // ---------- Firestore 即時監聽（所有人唯讀） ----------
+    function setupRealtimeListener() {
+      if (unsubscribeFirestore) unsubscribeFirestore();
+      unsubscribeFirestore = onSnapshot(tripRef(), (snap) => {
+        updateCloudStatus('connected', '雲端同步中');
+        if (!snap.exists()) { cloudHasItems = false; return; }
+        const data = snap.data();
+        cloudHasItems = !!(data.items && Object.keys(data.items).length);
+
+        // 編輯中不覆蓋畫面，避免打字被打斷；自己剛寫入的資料也不用重複套用
+        if (data.items && !isEditing && !snap.metadata.hasPendingWrites) {
+          applyDataToDOM(data.items);
+          localStorage.setItem(STORAGE_KEY_LOCAL, JSON.stringify(data.items));
+        }
+        if (data.checklist) {
+          cloudChecklist = data.checklist;
+          if (currentUser) {
+            applyChecklistToDOM(cloudChecklist);
+            localStorage.setItem(CHECKLIST_KEY, JSON.stringify(cloudChecklist));
+          }
+        }
+      }, (error) => {
+        console.error("即時監聽錯誤:", error);
+        updateCloudStatus('disconnected', '連線受阻');
+        loadSavedLocalContent();
+      });
+    }
+
+    // ---------- 儲存（只送出有修改的欄位） ----------
+    async function saveAndSyncToCloud(silent = false) {
+      const items = getCurrentDOMItems();
+      localStorage.setItem(STORAGE_KEY_LOCAL, JSON.stringify(items));
+
+      if (!db || !currentUser) { if (!silent) showToast("尚未登入，只存到本機", false); return false; }
+
+      const changed = {};
+      const seedAll = !cloudHasItems;
+      for (const k in items) if (seedAll || baselineItems[k] !== items[k]) changed[k] = items[k];
+
+      if (!Object.keys(changed).length) { if (!silent) showToast("沒有需要同步的變更"); return true; }
+
+      try {
+        await setDoc(tripRef(), { items: changed, updatedAt: new Date().toISOString() }, { merge: true });
+        baselineItems = items;
+        showToast("已同步至雲端，所有裝置即時更新");
+        return true;
+      } catch (error) {
+        console.error("寫入 Firestore 失敗:", error);
+        showToast(error.code === 'permission-denied'
+          ? "此帳號沒有編輯權限"
+          : "雲端同步失敗，請稍後再試", false);
+        return false;
+      }
+    }
+
+    // ---------- Google 登入 / 編輯模式 ----------
+    async function signInWithGoogle() {
+      sessionStorage.setItem(WANT_EDIT_KEY, '1');
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (e) {
+        if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment') {
+          await signInWithRedirect(auth, provider);   // 手機瀏覽器 / 彈窗被擋時改用跳轉
+        } else if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
+          console.error(e);
+          sessionStorage.removeItem(WANT_EDIT_KEY);
+          showToast("登入失敗：" + (e.code || e.message), false);
+        } else {
+          sessionStorage.removeItem(WANT_EDIT_KEY);
+        }
+      }
+    }
+
+    // 以一次無害的寫入確認該帳號是否在 Firestore 規則的編輯名單內
+    async function verifyEditorAndEnter() {
+      try {
+        await setDoc(tripRef(), { lastEditorLoginAt: new Date().toISOString() }, { merge: true });
+      } catch (e) {
+        if (e.code === 'permission-denied') {
+          showToast("此 Google 帳號沒有編輯權限，僅供瀏覽", false);
+          return;
+        }
+        showToast("無法確認編輯權限，請稍後再試", false);
+        return;
+      }
+      enableAdminMode();
+      showToast("已登入，點選任意文字即可修改");
+      if (!cloudHasItems) await saveAndSyncToCloud(true);   // 雲端還沒有行程時，自動上傳目前這一版
+    }
+
+    function enableAdminMode() {
+      isEditing = true;
+      document.body.classList.add('editing-active');
+      document.getElementById('adminStatusBar').classList.remove('hidden');
+      document.getElementById('adminBtnText').innerText = "退出編輯";
+      document.getElementById('adminIcon').className = "fa-solid fa-lock-open mr-1.5 text-orange-600";
+      document.querySelectorAll('.editable-item').forEach(el => el.setAttribute('contenteditable', 'true'));
+    }
+
+    window.handleAdminToggle = async function () {
+      if (isEditing) return window.exitAdmin();
+      if (!auth) { showToast("雲端尚未就緒，請稍後再試", false); return; }
+      if (currentUser) return verifyEditorAndEnter();
+      await signInWithGoogle();   // 登入成功後由 onAuthStateChanged 接手
+    };
+
+    window.exitAdmin = async function () {
+      await saveAndSyncToCloud(true);
+      isEditing = false;
+      document.body.classList.remove('editing-active');
+      document.getElementById('adminStatusBar').classList.add('hidden');
+      document.getElementById('adminBtnText').innerText = "登入編輯";
+      document.getElementById('adminIcon').className = "fa-solid fa-lock mr-1.5";
+      document.querySelectorAll('.editable-item').forEach(el => el.removeAttribute('contenteditable'));
+    };
+
+    window.saveAndSyncToCloud = () => saveAndSyncToCloud(false);
+
+    // ---------- 字體 ----------
+    window.toggleFontSize = function () {
+      const body = document.body, btnText = document.getElementById('fontBtnText');
+      currentFontSizeMode = (currentFontSizeMode + 1) % 3;
+      body.classList.remove('text-base', 'text-xl', 'text-2xl');
+      if (currentFontSizeMode === 0) { body.classList.add('text-base'); btnText.innerText = "字體: 標準"; showToast("已切換為標準字體"); }
+      else if (currentFontSizeMode === 1) { body.classList.add('text-xl'); btnText.innerText = "字體: 大 (長輩)"; showToast("已放大字體，長輩閱讀更輕鬆！"); }
+      else { body.classList.add('text-2xl'); btnText.innerText = "字體: 特大"; showToast("已切換為特大清晰字體！"); }
+    };
+
+    // ---------- 初始化 ----------
+    function initFirebase() {
+      loadSavedLocalContent();   // 先秒開本機快取
+      try {
+        updateCloudStatus('loading', '連線中...');
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        onAuthStateChanged(auth, (user) => {
+          currentUser = user;
+          if (user) {
+            if (cloudChecklist) applyChecklistToDOM(cloudChecklist);
+            if (sessionStorage.getItem(WANT_EDIT_KEY)) {
+              sessionStorage.removeItem(WANT_EDIT_KEY);
+              verifyEditorAndEnter();
+            }
+          } else {
+            applyLocalChecklist();
+          }
+        });
+
+        setupRealtimeListener();   // 不需登入即可讀取
+      } catch (err) {
+        console.error("Firebase 初始化異常:", err);
+        updateCloudStatus('disconnected', '本機離線模式');
+        showToast("雲端連線失敗，已使用本機快取", false);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      bindChecklistEvents();
+      initFirebase();
+    });
+  </script>
+</body>
+</html>
