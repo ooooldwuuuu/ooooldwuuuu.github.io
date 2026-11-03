@@ -948,7 +948,7 @@
   <!-- Firebase 11 模組化：Google 登入 + Firestore 即時同步 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -1161,7 +1161,7 @@
     window.handleAdminToggle = async function () {
       if (isEditing) return window.exitAdmin();
       if (!auth) { showToast("雲端尚未就緒，請稍後再試", false); return; }
-      if (currentUser) return verifyEditorAndEnter();
+      if (currentUser && !currentUser.isAnonymous) return verifyEditorAndEnter();
       await signInWithGoogle();   // 登入成功後由 onAuthStateChanged 接手
     };
 
@@ -1197,6 +1197,8 @@
         db = getFirestore(app);
 
         onAuthStateChanged(auth, (user) => {
+          // 舊版留下的匿名登入狀態：一律登出，改走 Google 登入
+          if (user && user.isAnonymous) { signOut(auth); return; }
           currentUser = user;
           if (user) {
             if (cloudChecklist) applyChecklistToDOM(cloudChecklist);
