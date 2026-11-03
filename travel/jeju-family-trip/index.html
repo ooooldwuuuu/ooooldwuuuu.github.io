@@ -1136,10 +1136,12 @@
         await setDoc(tripRef(), { lastEditorLoginAt: new Date().toISOString() }, { merge: true });
       } catch (e) {
         if (e.code === 'permission-denied') {
-          showToast("此 Google 帳號沒有編輯權限，僅供瀏覽", false);
+          console.warn("permission-denied，目前登入帳號:", currentUser && currentUser.email, "emailVerified:", currentUser && currentUser.emailVerified);
+          showToast("目前登入：" + (currentUser && currentUser.email) + "，不在編輯名單或規則尚未發布生效", false);
           return;
         }
-        showToast("無法確認編輯權限，請稍後再試", false);
+        console.error(e);
+        showToast("無法確認編輯權限：" + (e.code || e.message), false);
         return;
       }
       enableAdminMode();
