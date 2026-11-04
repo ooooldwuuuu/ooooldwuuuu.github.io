@@ -77,6 +77,9 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+      .edit-only{display:none}
+    body.editing-active .edit-only{display:flex}
+    @media print{.edit-only{display:none!important}}
   </style>
 </head>
 <body class="text-slate-800 text-base md:text-lg flex flex-col min-h-screen">
@@ -363,504 +366,7 @@
     </section>
 
     <!-- 區塊三：每日行程 (全部支援雲端即時同步) -->
-    <div class="space-y-8" id="dailyItineraryWrap">
-
-      <!-- ==================== DAY 1 ==================== -->
-      <section id="day1" class="day-card bg-white rounded-3xl p-5 md:p-7 border border-slate-200 shadow-lg scroll-mt-28">
-        <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
-          <div class="flex items-center gap-3">
-            <span class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-4 py-1.5 rounded-2xl text-lg shadow">
-              Day 1
-            </span>
-            <div>
-              <h3 class="text-xl md:text-2xl font-black text-slate-800">11/11 (週三) 啟程出發 · 濟州相會與熟成黑豬肉盛宴</h3>
-              <p class="text-xs md:text-sm text-slate-500 font-medium">抵達出關 · 機場取車 · 市區旅店 Check-in</p>
-            </div>
-          </div>
-          <span class="text-sm font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
-            宿：市區 Mir Guesthouse
-          </span>
-        </div>
-
-        <div class="mt-6 space-y-6">
-          <!-- 下午 -->
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm shadow-sm">
-                下午
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded">機場會合</span>
-                <h4 class="font-bold text-base md:text-lg text-slate-800 editable-item" data-field="d1_item1_title">台韓兩地出發 · 濟州國際機場 (CJU) 集合</h4>
-              </div>
-              <div class="text-sm text-slate-600 mt-2 space-y-1 editable-item" data-field="d1_item1_desc">
-                <p>• <strong>17:25</strong> 沛洪抵達濟州，先取好網路交通卡並至租車公司櫃檯完成辦理手續。</p>
-                <p>• <strong>19:30</strong> 忠岳與爸媽搭乘高雄航班抵達，出關後由沛洪在機場大廳接機，全家平安相聚！</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- 入住 -->
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shadow-sm">
-                20:00
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 bg-indigo-600 text-white text-xs font-bold rounded">🛏️ Check-in</span>
-                <h4 class="font-bold text-base md:text-lg text-slate-800 editable-item" data-field="d1_item2_title">市區入住：Mir Guesthouse (米爾旅館)</h4>
-              </div>
-              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d1_item2_desc">
-                位於濟州市區（鄰近龍頭岩），外觀如現代潛水艇，已於 Booking.com 預訂完成。先讓爸媽放行李、洗把臉準備出門享受烤肉！
-              </p>
-            </div>
-          </div>
-
-          <!-- 晚餐 -->
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-bold text-sm shadow">
-                20:30
-              </span>
-            </div>
-            <div class="flex-grow bg-orange-50/70 p-5 rounded-2xl border-2 border-orange-200 shadow-sm">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="px-2.5 py-0.5 bg-orange-600 text-white text-xs font-black rounded-full">🍛 預約晚餐盛宴</span>
-                <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">已訂位 20:30</span>
-              </div>
-              <h4 class="font-black text-xl text-slate-900 mt-2 editable-item" data-field="d1_item3_title">熟成到 濟州本店 (Suksungdo 숙성도 노형본점)</h4>
-              <p class="text-sm text-slate-700 mt-1 leading-relaxed editable-item" data-field="d1_item3_desc">
-                濟州最具代表性的頂級熟成黑豬肉！專人桌邊代烤至外皮金黃香脆、肉質軟嫩多汁，牙口不好的長輩也能輕鬆入口。
-              </p>
-              
-              <div class="mt-3 p-3 bg-white rounded-xl border border-orange-200 text-xs md:text-sm text-slate-600">
-                <span class="font-bold text-orange-700"><i class="fa-solid fa-lightbulb"></i> 晚到備案：</span>
-                <span class="editable-item" data-field="d1_item3_backup">若班機出關排隊過久，可改吃濟州老字號<strong>「姊妹麵條 (자매국수)」</strong>，濃郁大骨高湯配軟嫩豬肉切片麵，暖胃舒坦。</span>
-              </div>
-
-              <div class="mt-3">
-                <a href="https://maps.google.com/?q=Suksungdo+Nohyeong+Jeju" target="_blank" class="inline-flex items-center bg-white px-3 py-1.5 rounded-lg border border-orange-300 text-orange-700 font-bold hover:bg-orange-100 transition shadow-sm text-xs">
-                  <i class="fa-solid fa-location-dot mr-1 text-red-500"></i> 開啟 Google 地圖定位
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== DAY 2 ==================== -->
-      <section id="day2" class="day-card bg-white rounded-3xl p-5 md:p-7 border border-slate-200 shadow-lg scroll-mt-28">
-        <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
-          <div class="flex items-center gap-3">
-            <span class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-4 py-1.5 rounded-2xl text-lg shadow">
-              Day 2
-            </span>
-            <div>
-              <h3 class="text-xl md:text-2xl font-black text-slate-800">11/12 (週四) 東岸海韻 · 人氣牛島遊船與城山日出峰</h3>
-              <p class="text-xs md:text-sm text-slate-500 font-medium">超人氣麵包 · 牛島跳島花生冰淇淋 · 必吃小鮑魚砂鍋</p>
-            </div>
-          </div>
-          <span class="text-sm font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
-            宿：東南邊度假別墅 (連住兩晚)
-          </span>
-        </div>
-
-        <div class="mt-6 space-y-6">
-          <!-- 早餐 -->
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm shadow-sm">
-                07:00
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <span class="px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded">🍳 朝食與潮流</span>
-              <h4 class="font-bold text-base md:text-lg text-slate-800 mt-1 editable-item" data-field="d2_item1_title">Audrant Bakery 爆漿大蒜麵包 & 倫敦貝果 / Blue Elephant</h4>
-              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d2_item1_desc">
-                至朝天邑咸德海邊人氣烘焙坊 <strong>Audrant Bakery</strong> 嚐招牌大蒜法包，順遊倫敦貝果博物館與 Blue Elephant 試戴潮流墨鏡。
-              </p>
-            </div>
-          </div>
-
-          <!-- 景點：牛島 -->
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center font-bold text-sm shadow">
-                上午
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-              <div class="flex items-center justify-between">
-                <span class="px-2 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">🏝️ 必遊跳島</span>
-                <span class="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded">船程僅 15 分鐘</span>
-              </div>
-              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1.5 editable-item" data-field="d2_item2_title">牛島 (Udo Island) 跳島探訪</h4>
-              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d2_item2_desc">
-                從「城山港」出發搭乘渡輪，欣賞清澈如翡翠的珊瑚沙海灘、品嚐牛島特產花生冰淇淋。可搭乘環島公車，爸媽免走遠路輕鬆遊覽。
-              </p>
-              
-              <div class="mt-3 rounded-xl overflow-hidden h-48 md:h-56 relative shadow">
-                <img src="https://images.unsplash.com/photo-1596401057633-54a8fe8ef647?q=80&w=800&auto=format&fit=crop" 
-                     alt="Udo Island" class="w-full h-full object-cover">
-                <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2.5 py-1 rounded-md backdrop-blur-sm">
-                  牛島碧海白沙實景
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 午餐 -->
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm shadow-sm">
-                12:30
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-orange-50/70 p-4 rounded-2xl border border-orange-200">
-              <span class="px-2 py-0.5 bg-orange-600 text-white text-xs font-bold rounded">🍛 海味午餐</span>
-              <h4 class="font-bold text-base md:text-lg text-slate-900 mt-1 editable-item" data-field="d2_item3_title">東部名店 · 小鮑魚餐廳 (오조해녀의집)</h4>
-              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d2_item3_desc">
-                回城山港後享用海女採集的新鮮鮑魚粥、香烤小鮑魚及熱騰騰的活海鮮砂鍋，湯頭溫潤鮮甜，最適合長輩調養體力。
-              </p>
-            </div>
-          </div>
-
-          <!-- 城山日出峰 -->
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow">
-                下午
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-              <span class="px-2 py-0.5 bg-emerald-600 text-white text-xs font-bold rounded">UNESCO 自然遺產</span>
-              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1.5 editable-item" data-field="d2_item4_title">城山日出峰 (Seongsan Ilchulbong)</h4>
-              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d2_item4_desc">
-                火山噴發形成宛如巨型皇冠。推薦帶爸媽走平緩寬敞的<strong>「左側免費海景步道」</strong>，既可飽覽壯麗海景與海女小屋，又完全不需費力爬陡階梯！
-              </p>
-
-              <div class="mt-3 rounded-xl overflow-hidden h-48 md:h-56 relative shadow">
-                <img src="https://images.unsplash.com/photo-1627916607164-7b20241db935?q=80&w=800&auto=format&fit=crop" 
-                     alt="Seongsan Ilchulbong" class="w-full h-full object-cover">
-                <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2.5 py-1 rounded-md backdrop-blur-sm">
-                  城山日出峰火山海岬實景
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 住宿 -->
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shadow-sm">
-                宿
-              </span>
-            </div>
-            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <span class="px-2 py-0.5 bg-indigo-600 text-white text-xs font-bold rounded">🛏️ 連住兩晚免搬行李</span>
-              <h4 class="font-bold text-base md:text-lg text-slate-900 mt-1 editable-item" data-field="d2_item5_title">入住東南邊渡假旅宿 (第一晚)</h4>
-              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d2_item5_desc">
-                晚餐在周邊悠閒享用暖胃湯飯或海鮮鍋，連住兩晚省去長輩每日收拾行李的疲累。
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== DAY 3 ==================== -->
-      <section id="day3" class="day-card bg-white rounded-3xl p-5 md:p-7 border border-slate-200 shadow-lg scroll-mt-28">
-        <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
-          <div class="flex items-center gap-3">
-            <span class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-4 py-1.5 rounded-2xl text-lg shadow">
-              Day 3
-            </span>
-            <div>
-              <h3 class="text-xl md:text-2xl font-black text-slate-800">11/13 (週五) 童趣綠意 · 銀白芒草海與傳統韓服留影</h3>
-              <p class="text-xs md:text-sm text-slate-500 font-medium">Snoopy Garden 森林漫步 · 山君不離芒草浪 · 民俗村全家福</p>
-            </div>
-          </div>
-          <span class="text-sm font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
-            宿：東南邊度假別墅
-          </span>
-        </div>
-
-        <div class="mt-6 space-y-6">
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center font-bold text-sm shadow">
-                上午
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-              <div>
-                <span class="px-2 py-0.5 bg-pink-500 text-white text-xs font-bold rounded">療癒大自然</span>
-                <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d3_item1_title">Snoopy Garden (史努比庭園)</h4>
-                <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d3_item1_desc">
-                  廣闊平緩的自然園區，散步道綠樹成蔭，隨處可見可愛逗趣的雕塑與花園造景，非常適合長輩散步拍照。
-                </p>
-                <div class="mt-2 rounded-xl overflow-hidden h-44 relative shadow">
-                  <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=800&auto=format&fit=crop" 
-                       alt="Snoopy Garden" class="w-full h-full object-cover">
-                  <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">史努比庭園實景</div>
-                </div>
-              </div>
-
-              <div class="border-t border-slate-100 pt-3">
-                <span class="px-2 py-0.5 bg-amber-600 text-white text-xs font-bold rounded">11月限定絕景</span>
-                <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d3_item2_title">山君不離 (Sangumburi 火山口)</h4>
-                <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d3_item2_desc">
-                  秋天濟州島最夢幻的銀白芒草花海！步道平緩寬敞，隨手一拍就是全家合影明信片。
-                </p>
-                <div class="mt-2 rounded-xl overflow-hidden h-44 relative shadow">
-                  <img src="https://images.unsplash.com/photo-1508873696983-2df5293cb395?q=80&w=800&auto=format&fit=crop" 
-                       alt="Sangumburi Reed Field" class="w-full h-full object-cover">
-                  <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">山君不離秋季芒草波浪實景</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center font-bold text-sm shadow">
-                下午
-              </span>
-            </div>
-            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-              <span class="px-2 py-0.5 bg-purple-600 text-white text-xs font-bold rounded">文化體驗 & 全家福拍攝</span>
-              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d3_item3_title">濟州民俗村 (城邑或表善) · 換穿韓服留影</h4>
-              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d3_item3_desc">
-                帶爸媽穿上正統韓服，在黑色玄武岩石牆與茅草屋前拍下溫馨全家福，留下難忘紀念。
-              </p>
-              <div class="mt-2 rounded-xl overflow-hidden h-44 relative shadow">
-                <img src="https://images.unsplash.com/photo-1583244532610-2a234e7c3eca?q=80&w=800&auto=format&fit=crop" 
-                     alt="Korean Folk Village" class="w-full h-full object-cover">
-                <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">民俗村傳統石牆與茅草屋</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== DAY 4 ==================== -->
-      <section id="day4" class="day-card bg-white rounded-3xl p-5 md:p-7 border border-slate-200 shadow-lg scroll-mt-28">
-        <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
-          <div class="flex items-center gap-3">
-            <span class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-4 py-1.5 rounded-2xl text-lg shadow">
-              Day 4
-            </span>
-            <div>
-              <h3 class="text-xl md:text-2xl font-black text-slate-800">11/14 (週六) 南岸壯麗瀑布 · 綠茶園與涯月金黃夕陽</h3>
-              <p class="text-xs md:text-sm text-slate-500 font-medium">烤整條白帶魚 · 正房瀑布 · 柱狀節理 · 匠人之家暖心火鍋</p>
-            </div>
-          </div>
-          <span class="text-sm font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-            宿：森林景觀獨棟 Airbnb
-          </span>
-        </div>
-
-        <div class="mt-6 space-y-6">
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-sm shadow-sm">
-                08:30
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <span class="px-2 py-0.5 bg-amber-500 text-white text-xs font-bold rounded">傳統市場</span>
-              <h4 class="font-bold text-base md:text-lg text-slate-800 editable-item" data-field="d4_item1_title">西歸浦每日偶來市場 (Seogwipo Maeil Olle Market)</h4>
-              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d4_item1_desc">
-                早晨逛熱鬧市場，品嚐現剝甜美濟州蜜柑、黑豬肉可樂餅、現榨柑橘果汁。
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center font-bold text-sm shadow">
-                上午
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-              <span class="px-2 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">南岸地質巡禮</span>
-              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item2_title">正房瀑布 / 柱狀節理帶 / 龍頭海岸</h4>
-              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d4_item2_desc">
-                亞洲唯一直接入海的正房瀑布，以及黑巧克力般的六角柱狀節理奇岩，視爸媽當日體力彈性安排參觀。
-              </p>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-                <div class="rounded-xl overflow-hidden h-40 relative shadow">
-                  <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?q=80&w=600&auto=format&fit=crop" 
-                       alt="Jeongbang Waterfall" class="w-full h-full object-cover">
-                  <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">正房瀑布直接衝入大海</div>
-                </div>
-                <div class="rounded-xl overflow-hidden h-40 relative shadow">
-                  <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=600&auto=format&fit=crop" 
-                       alt="Jusangjeolli Cliff" class="w-full h-full object-cover">
-                  <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">大浦海岸柱狀節理奇岩</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm shadow-sm">
-                12:30
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-orange-50/70 p-4 rounded-2xl border-2 border-orange-200">
-              <span class="px-2 py-0.5 bg-orange-600 text-white text-xs font-black rounded">一公尺霸氣名菜</span>
-              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item3_title">整條烤白帶魚盛宴 · Galchiwang (갈치왕)</h4>
-              <p class="text-sm text-slate-700 mt-1 editable-item" data-field="d4_item3_desc">
-                近一米長的整尾烤白帶魚！店員貼心桌邊剔刺，肉質細嫩鮮美無刺，爸媽吃得安心又開心。
-              </p>
-              <div class="mt-2">
-                <a href="https://maps.google.com/?q=Galchiwang+Jeju" target="_blank" class="inline-flex items-center text-xs font-bold text-orange-700 bg-white px-2.5 py-1 rounded border border-orange-300 hover:bg-orange-100">
-                  <i class="fa-solid fa-map-location-dot mr-1"></i> Galchiwang 地圖導航
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow">
-                下午
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-              <div>
-                <span class="px-2 py-0.5 bg-emerald-700 text-white text-xs font-bold rounded">茶園與花海</span>
-                <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item4_title">Osulloc 綠茶博物館 & Manor Blanc (粉黛亂子草)</h4>
-                <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d4_item4_desc">
-                  品嚐香濃綠茶冰淇淋與年輪蛋糕，順遊欣賞盛開的粉紅花海。
-                </p>
-              </div>
-
-              <div class="border-t border-slate-100 pt-3">
-                <span class="px-2 py-0.5 bg-orange-500 text-white text-xs font-bold rounded">金黃夕陽名所</span>
-                <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item5_title">涯月咖啡街 (Aewol Handam) 金黃落日</h4>
-                <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d4_item5_desc">
-                  漫步漢潭海岸步道欣賞夕陽落入海平面，在海景咖啡廳享受悠閒午後時光。
-                </p>
-                <div class="mt-2 rounded-xl overflow-hidden h-44 relative shadow">
-                  <img src="https://images.unsplash.com/photo-1518457607834-6e8d80c183c5?q=80&w=800&auto=format&fit=crop" 
-                       alt="Aewol Sunset" class="w-full h-full object-cover">
-                  <div class="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded">涯月海岸金黃日落實景</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 晚餐 -->
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-orange-500 text-white flex items-center justify-center font-bold text-sm shadow">
-                18:30
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-orange-50/70 p-4 rounded-2xl border border-orange-200">
-              <span class="px-2 py-0.5 bg-orange-600 text-white text-xs font-black rounded">暖胃火鍋首選</span>
-              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item6_title">匠人之家 涯月本店 (장인의집)</h4>
-              <p class="text-sm text-slate-700 mt-1 editable-item" data-field="d4_item6_desc">
-                濃郁牛骨高湯、澎湃海鮮、四色手工大水餃（章魚、鮑魚、泡菜、黑豬肉），晚風吹拂下喝一碗熱湯格外幸福。
-              </p>
-              <div class="mt-2">
-                <a href="https://maps.google.com/?q=Jang-in-ui-jib+Aewol" target="_blank" class="inline-flex items-center text-xs font-bold text-orange-700 bg-white px-2.5 py-1 rounded border border-orange-300 hover:bg-orange-100">
-                  <i class="fa-solid fa-location-dot mr-1 text-red-500"></i> 匠人之家 涯月本店 Google 地圖
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <!-- 住宿 -->
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shadow-sm">
-                宿
-              </span>
-            </div>
-            <div class="flex-grow bg-emerald-50/80 p-4 rounded-2xl border-2 border-emerald-300">
-              <span class="px-2 py-0.5 bg-emerald-700 text-white text-xs font-bold rounded">Airbnb 獨棟包棟房源</span>
-              <h4 class="font-bold text-lg md:text-xl text-slate-900 mt-1 editable-item" data-field="d4_item7_title">獨棟森林景觀房源 · 烤肉與營火時光</h4>
-              <p class="text-sm text-slate-700 mt-1 editable-item" data-field="d4_item7_desc">
-                濟州最後一晚入住森林庭院別墅，全家在營火旁吃水果聊天，為旅程畫下完美句點。
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== DAY 5 ==================== -->
-      <section id="day5" class="day-card bg-white rounded-3xl p-5 md:p-7 border border-slate-200 shadow-lg scroll-mt-28">
-        <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
-          <div class="flex items-center gap-3">
-            <span class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-4 py-1.5 rounded-2xl text-lg shadow">
-              Day 5
-            </span>
-            <div>
-              <h3 class="text-xl md:text-2xl font-black text-slate-800">11/15 (週日) 滿載回憶 · 平安賦歸溫暖回家</h3>
-              <p class="text-xs md:text-sm text-slate-500 font-medium">機場還車 · 免稅店伴手禮採買 · 登機返回台灣</p>
-            </div>
-          </div>
-          <span class="text-sm font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-            平安賦歸 ✈️
-          </span>
-        </div>
-
-        <div class="mt-6 space-y-6">
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center font-bold text-sm shadow">
-                08:30
-              </span>
-              <div class="w-0.5 h-full bg-slate-200 my-1"></div>
-            </div>
-            <div class="flex-grow bg-slate-50 p-4 rounded-2xl border border-slate-200">
-              <span class="px-2 py-0.5 bg-slate-700 text-white text-xs font-bold rounded">退房與還車</span>
-              <h4 class="font-bold text-base md:text-lg text-slate-800 editable-item" data-field="d5_item1_title">整理行囊退房，前往租車站完成還車手續</h4>
-              <p class="text-sm text-slate-600 mt-1 editable-item" data-field="d5_item1_desc">
-                檢查護照隨身物品，駕車至機場租車中心還車，搭乘接駁車至航廈辦理報到與免稅購物。
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-4">
-            <div class="flex flex-col items-center">
-              <span class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow">
-                11:00
-              </span>
-            </div>
-            <div class="flex-grow bg-blue-50/70 p-4 rounded-2xl border border-blue-200">
-              <span class="px-2 py-0.5 bg-blue-600 text-white text-xs font-bold rounded">濟州 CJU 出發</span>
-              <h4 class="font-bold text-base md:text-lg text-slate-900 mt-1 editable-item" data-field="d5_item2_title">登機返航 · 平安抵達小港與桃園</h4>
-              <div class="mt-2 text-sm text-slate-700 space-y-1 editable-item" data-field="d5_item2_desc">
-                <p>🛫 <strong>忠岳 & 爸媽：</strong>11:05 起飛，預計 12:40 抵達高雄小港機場。</p>
-                <p>🛫 <strong>沛洪：</strong>12:05 起飛，預計 13:40 抵達台北桃園機場。</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-    </div>
+    <div class="space-y-8" id="dailyItineraryWrap"></div>
 
     <!-- 區塊四：牛島搭船圖解教學 (長輩最安心) -->
     <section id="section-traffic" class="bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-3xl p-6 md:p-8 border-2 border-blue-200 shadow-lg scroll-mt-28">
@@ -949,7 +455,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, onSnapshot, collection, writeBatch, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDcteMBDxbipPnIe31mV03XTdpd9Hoyaoo",
@@ -1145,7 +651,8 @@
         return;
       }
       enableAdminMode();
-      showToast("已登入，點選任意文字即可修改");
+      showToast("已登入，可調整順序、新增或編輯站點");
+      try { await ensureSeeded(); } catch (e) { console.error(e); }
       if (!cloudHasItems) await saveAndSyncToCloud(true);   // 雲端還沒有行程時，自動上傳目前這一版
     }
 
@@ -1187,6 +694,243 @@
       else { body.classList.add('text-2xl'); btnText.innerText = "字體: 特大"; showToast("已切換為特大清晰字體！"); }
     };
 
+    // ================= 行程站點（子集合 trips/jeju2024/stops） =================
+    const TYPES = {
+      food:      { n: '餐廳', i: 'fa-utensils',    b: 'bg-orange-500',  bd: 'border-orange-300',  bg: 'bg-orange-50' },
+      stay:      { n: '住宿', i: 'fa-bed',         b: 'bg-indigo-600',  bd: 'border-indigo-300',  bg: 'bg-indigo-50' },
+      spot:      { n: '景點', i: 'fa-mountain-sun', b: 'bg-emerald-600', bd: 'border-emerald-300', bg: 'bg-emerald-50' },
+      transport: { n: '交通', i: 'fa-car-side',    b: 'bg-sky-600',     bd: 'border-sky-300',     bg: 'bg-sky-50' }
+    };
+    const DAYS = [
+      ['11/11 (週三) 啟程出發 · 濟州相會與熟成黑豬肉盛宴', '抵達出關 · 機場取車 · 市區旅店 Check-in', '宿：市區 Mir Guesthouse'],
+      ['11/12 (週四) 東岸海韻 · 人氣牛島遊船與城山日出峰', '超人氣麵包 · 牛島跳島花生冰淇淋 · 必吃小鮑魚砂鍋', '宿：東南邊度假別墅 (連住兩晚)'],
+      ['11/13 (週五) 童趣綠意 · 銀白芒草海與傳統韓服留影', 'Snoopy Garden 森林漫步 · 山君不離芒草浪 · 民俗村全家福', '宿：東南邊度假別墅'],
+      ['11/14 (週六) 南岸壯麗瀑布 · 綠茶園與涯月金黃夕陽', '烤整條白帶魚 · 正房瀑布 · 柱狀節理 · 匠人之家暖心火鍋', '宿：森林景觀獨棟 Airbnb'],
+      ['11/15 (週日) 滿載回憶 · 平安賦歸溫暖回家', '機場還車 · 免稅店伴手禮採買 · 登機返回台灣', '平安賦歸 ✈️']
+    ];
+    const U = id => `https://images.unsplash.com/photo-${id}?q=80&w=800&auto=format&fit=crop`;
+    const G = q => 'https://maps.google.com/?q=' + q;
+    // [day, type, time, title, desc, googleMap, photos]
+    const SEED_RAW = [
+      [1,'transport','下午','濟州國際機場 (CJU) 集合','17:25 沛洪抵達濟州，先取好網路交通卡並至租車公司櫃檯辦理手續。\n19:30 忠岳與爸媽搭高雄航班抵達，出關後由沛洪在機場大廳接機，全家平安相聚！'],
+      [1,'stay','20:00','市區入住：Mir Guesthouse (米爾旅館)','位於濟州市區（鄰近龍頭岩），已於 Booking.com 預訂完成。先讓爸媽放行李、洗把臉準備出門享受烤肉！'],
+      [1,'food','20:30','熟成到 濟州本店 (Suksungdo 숙성도 노형본점)','已訂位 20:30。濟州最具代表性的頂級熟成黑豬肉，專人桌邊代烤，長輩也能輕鬆入口。\n晚到備案：若出關排隊過久，可改吃老字號「姊妹麵條 (자매국수)」。',G('Suksungdo+Nohyeong+Jeju')],
+      [2,'food','07:00','Audrant Bakery 爆漿大蒜麵包 & 倫敦貝果 / Blue Elephant','至朝天邑咸德海邊人氣烘焙坊嚐招牌大蒜法包，順遊倫敦貝果博物館與 Blue Elephant 試戴潮流墨鏡。'],
+      [2,'spot','上午','牛島 (Udo Island) 跳島探訪','從「城山港」搭渡輪（船程約 15 分鐘），欣賞翡翠般的珊瑚沙海灘、品嚐花生冰淇淋。可搭環島公車，爸媽免走遠路。','',[U('1596401057633-54a8fe8ef647')]],
+      [2,'food','12:30','東部名店 · 小鮑魚餐廳 (오조해녀의집)','回城山港後享用海女採集的新鮮鮑魚粥、香烤小鮑魚及活海鮮砂鍋，最適合長輩調養體力。'],
+      [2,'spot','下午','城山日出峰 (Seongsan Ilchulbong)','UNESCO 自然遺產。推薦帶爸媽走平緩寬敞的「左側免費海景步道」，不需爬陡階梯。','',[U('1627916607164-7b20241db935')]],
+      [2,'stay','晚上','入住東南邊渡假旅宿 (第一晚)','連住兩晚免搬行李。晚餐在周邊悠閒享用暖胃湯飯或海鮮鍋。'],
+      [3,'spot','上午','Snoopy Garden (史努比庭園)','廣闊平緩的自然園區，綠樹成蔭，隨處可見可愛雕塑，適合長輩散步拍照。','',[U('1585320806297-9794b3e4eeae')]],
+      [3,'spot','上午','山君不離 (Sangumburi 火山口)','11 月限定：秋天最夢幻的銀白芒草花海！步道平緩寬敞，隨手一拍就是全家合影。','',[U('1508873696983-2df5293cb395')]],
+      [3,'spot','下午','濟州民俗村 · 換穿韓服留影','帶爸媽穿上正統韓服，在玄武岩石牆與茅草屋前拍下溫馨全家福。','',[U('1583244532610-2a234e7c3eca')]],
+      [4,'spot','08:30','西歸浦每日偶來市場','早晨逛熱鬧市場，品嚐現剝濟州蜜柑、黑豬肉可樂餅、現榨柑橘果汁。'],
+      [4,'spot','上午','正房瀑布 / 柱狀節理帶 / 龍頭海岸','亞洲唯一直接入海的正房瀑布與六角柱狀節理奇岩，視爸媽當日體力彈性安排。','',[U('1544644181-1484b3fdfc62'),U('1578632767115-351597cf2477')]],
+      [4,'food','12:30','整條烤白帶魚盛宴 · Galchiwang (갈치왕)','近一米長的整尾烤白帶魚，店員桌邊剔刺，爸媽吃得安心又開心。',G('Galchiwang+Jeju')],
+      [4,'spot','下午','Osulloc 綠茶博物館 & Manor Blanc (粉黛亂子草)','品嚐綠茶冰淇淋與年輪蛋糕，順遊欣賞盛開的粉紅花海。'],
+      [4,'spot','傍晚','涯月咖啡街 (Aewol Handam) 金黃落日','漫步漢潭海岸步道欣賞夕陽落入海平面，在海景咖啡廳享受悠閒時光。','',[U('1518457607834-6e8d80c183c5')]],
+      [4,'food','18:30','匠人之家 涯月本店 (장인의집)','濃郁牛骨高湯、澎湃海鮮、四色手工大水餃，晚風吹拂下喝一碗熱湯格外幸福。',G('Jang-in-ui-jib+Aewol')],
+      [4,'stay','晚上','獨棟森林景觀房源 · 烤肉與營火時光','濟州最後一晚入住森林庭院別墅，全家在營火旁吃水果聊天，為旅程畫下句點。'],
+      [5,'transport','08:30','退房、前往租車站還車','檢查護照隨身物品，駕車至機場租車中心還車，搭接駁車至航廈辦理報到與免稅購物。'],
+      [5,'transport','11:00','登機返航 · 平安抵達小港與桃園','忠岳 & 爸媽：11:05 起飛，預計 12:40 抵達高雄小港機場。\n沛洪：12:05 起飛，預計 13:40 抵達台北桃園機場。']
+    ];
+    const SEED = SEED_RAW.map((r, i) => ({
+      id: 's' + String(i + 1).padStart(2, '0'), day: r[0], order: (i + 1) * 10, type: r[1], time: r[2],
+      title: r[3], desc: r[4] || '', mapUrl: r[5] || '', naverUrl: '', photos: r[6] || []
+    }));
+    let cloudStops = [];
+    let editingId = null, formPhotos = [];
+
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const safeUrl = u => (/^https?:\/\//i.test(u || '') ? u : '');
+    const allStops = () => (cloudStops.length ? cloudStops : SEED);
+    const dayList = d => allStops().filter(s => s.day === d).sort((a, b) => a.order - b.order);
+    const stopsCol = () => collection(db, ...TRIP_PATH, 'stops');
+    const stopRef = id => doc(db, ...TRIP_PATH, 'stops', id);
+
+    function stopCard(s, i, n) {
+      const t = TYPES[s.type] || TYPES.spot;
+      const photos = (s.photos || []).map(p => `<img src="${esc(p)}" class="w-full h-44 object-cover rounded-xl shadow" loading="lazy" alt="">`).join('');
+      const g = safeUrl(s.mapUrl), nv = safeUrl(s.naverUrl);
+      const links = (g || nv) ? `<div class="mt-3 flex flex-wrap gap-2">
+        ${g ? `<a href="${esc(g)}" target="_blank" rel="noopener" class="inline-flex items-center text-xs font-bold bg-white px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700"><i class="fa-solid fa-location-dot mr-1 text-red-500"></i>Google 地圖</a>` : ''}
+        ${nv ? `<a href="${esc(nv)}" target="_blank" rel="noopener" class="inline-flex items-center text-xs font-bold bg-white px-3 py-1.5 rounded-lg border border-green-400 text-green-700"><i class="fa-solid fa-map-location-dot mr-1"></i>Naver 地圖</a>` : ''}</div>` : '';
+      const btn = (act, ic, dis) => `<button data-act="${act}" data-id="${s.id}" ${dis ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-white border border-slate-300 text-slate-600 disabled:opacity-30"><i class="fa-solid ${ic}"></i></button>`;
+      return `<div class="flex gap-3 items-start">
+        <div class="w-16 shrink-0 text-center"><span class="inline-block ${t.b} text-white rounded-xl px-2 py-1 text-xs font-bold">${esc(s.time)}</span></div>
+        <div class="flex-grow min-w-0 rounded-2xl border-2 ${t.bd} ${t.bg} p-4">
+          <div class="flex items-center justify-between gap-2">
+            <span class="${t.b} text-white text-xs font-bold px-2.5 py-0.5 rounded-full"><i class="fa-solid ${t.i} mr-1"></i>${t.n}</span>
+            <div class="edit-only gap-1">${btn('up', 'fa-arrow-up', i === 0)}${btn('down', 'fa-arrow-down', i === n - 1)}${btn('edit', 'fa-pen')}${btn('del', 'fa-trash')}</div>
+          </div>
+          <h4 class="font-black text-lg text-slate-900 mt-2">${esc(s.title)}</h4>
+          ${s.desc ? `<p class="text-sm text-slate-700 mt-1 leading-relaxed whitespace-pre-line">${esc(s.desc)}</p>` : ''}
+          ${photos ? `<div class="mt-3 grid gap-2 ${(s.photos || []).length > 1 ? 'sm:grid-cols-2' : ''}">${photos}</div>` : ''}
+          ${links}
+        </div></div>`;
+    }
+
+    function renderDays() {
+      const legend = `<div class="flex flex-wrap gap-2 text-xs font-bold">${Object.values(TYPES).map(t => `<span class="${t.b} text-white px-3 py-1 rounded-full"><i class="fa-solid ${t.i} mr-1"></i>${t.n}</span>`).join('')}</div>`;
+      $('dailyItineraryWrap').innerHTML = legend + DAYS.map((d, di) => {
+        const list = dayList(di + 1);
+        return `<section id="day${di + 1}" class="day-card bg-white rounded-3xl p-5 md:p-7 border border-slate-200 shadow-lg scroll-mt-28">
+          <div class="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-2">
+            <div class="flex items-center gap-3">
+              <span class="bg-gradient-to-r from-orange-500 to-amber-500 text-white font-black px-4 py-1.5 rounded-2xl text-lg shadow">Day ${di + 1}</span>
+              <div><h3 class="text-xl md:text-2xl font-black text-slate-800">${esc(d[0])}</h3><p class="text-xs md:text-sm text-slate-500 font-medium">${esc(d[1])}</p></div>
+            </div>
+            <span class="text-sm font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">${esc(d[2])}</span>
+          </div>
+          <div class="mt-6 space-y-4">${list.map((s, i) => stopCard(s, i, list.length)).join('')}</div>
+          <button data-act="add" data-day="${di + 1}" class="edit-only mt-5 w-full justify-center items-center py-3 rounded-2xl border-2 border-dashed border-orange-300 text-orange-600 font-bold"><i class="fa-solid fa-plus mr-2"></i>新增站點</button>
+        </section>`;
+      }).join('');
+    }
+
+    async function ensureSeeded() {
+      if (cloudStops.length) return;
+      const batch = writeBatch(db);
+      SEED.forEach(s => { const { id, ...d } = s; batch.set(stopRef(id), d); });
+      await batch.commit();
+    }
+
+    async function moveStop(id, dir) {
+      const s = allStops().find(x => x.id === id); if (!s) return;
+      const list = dayList(s.day), i = list.findIndex(x => x.id === id), o = list[i + dir];
+      if (!o) return;
+      try {
+        await ensureSeeded();
+        const batch = writeBatch(db);
+        batch.update(stopRef(s.id), { order: o.order });
+        batch.update(stopRef(o.id), { order: s.order });
+        await batch.commit();
+      } catch (e) { stopError(e); }
+    }
+
+    function stopError(e) {
+      console.error(e);
+      showToast(e.code === 'permission-denied' ? '沒有編輯權限（請確認已發布最新規則）' : '儲存失敗：' + (e.code || e.message), false);
+    }
+
+    // ---------- 新增 / 編輯視窗 ----------
+    function buildModal() {
+      const m = document.createElement('div');
+      m.id = 'stopModal';
+      m.className = 'hidden fixed inset-0 z-[60] bg-black/50 items-end sm:items-center justify-center p-3';
+      m.innerHTML = `<div class="bg-white w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-3xl p-5 space-y-3 text-base">
+        <h3 id="mTitle" class="text-xl font-black text-slate-900">站點</h3>
+        <div id="mTypes" class="grid grid-cols-4 gap-2">${Object.entries(TYPES).map(([k, t]) => `<button type="button" data-type="${k}" class="py-2 rounded-xl border-2 border-slate-200 text-sm font-bold"><i class="fa-solid ${t.i} block mb-1"></i>${t.n}</button>`).join('')}</div>
+        <div class="grid grid-cols-2 gap-2">
+          <select id="mDay" class="border rounded-xl p-2">${DAYS.map((_, i) => `<option value="${i + 1}">Day ${i + 1}</option>`).join('')}</select>
+          <input id="mTime" class="border rounded-xl p-2" placeholder="時間（如 12:30 / 下午）">
+        </div>
+        <input id="mName" class="border rounded-xl p-2 w-full" placeholder="名稱">
+        <textarea id="mDesc" rows="4" class="border rounded-xl p-2 w-full" placeholder="說明、備註（可換行）"></textarea>
+        <input id="mGoogle" class="border rounded-xl p-2 w-full" placeholder="Google 地圖連結（https://...）">
+        <input id="mNaver" class="border rounded-xl p-2 w-full" placeholder="Naver 地圖連結（https://...）">
+        <div><div id="mPhotos" class="grid grid-cols-3 gap-2 mb-2"></div>
+          <label class="inline-flex items-center px-3 py-2 rounded-xl border-2 border-dashed border-slate-300 text-slate-600 font-bold cursor-pointer"><i class="fa-solid fa-image mr-2"></i>加入照片
+            <input id="mFile" type="file" accept="image/*" multiple class="hidden"></label></div>
+        <div class="flex gap-2 pt-2"><button type="button" id="mCancel" class="flex-1 py-3 rounded-2xl bg-slate-100 font-bold">取消</button>
+          <button type="button" id="mSave" class="flex-1 py-3 rounded-2xl bg-orange-500 text-white font-bold">儲存</button></div></div>`;
+      document.body.appendChild(m);
+      m.addEventListener('click', e => { if (e.target === m) closeModal(); });
+      $('mCancel').onclick = closeModal;
+      $('mSave').onclick = saveStop;
+      $('mTypes').onclick = e => { const b = e.target.closest('[data-type]'); if (b) setType(b.dataset.type); };
+      $('mFile').onchange = async e => {
+        for (const f of e.target.files) {
+          if (formPhotos.length >= 3) { showToast('每站最多 3 張照片', false); break; }
+          try { formPhotos.push(await compress(f)); } catch (err) { showToast('照片讀取失敗', false); }
+        }
+        e.target.value = ''; drawPhotos();
+      };
+      $('mPhotos').onclick = e => { const b = e.target.closest('[data-rm]'); if (b) { formPhotos.splice(+b.dataset.rm, 1); drawPhotos(); } };
+    }
+    function compress(file) {
+      return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            const k = Math.min(1, 900 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+            c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+            c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+            res(c.toDataURL('image/jpeg', 0.72));
+          };
+          img.onerror = rej; img.src = r.result;
+        };
+        r.onerror = rej; r.readAsDataURL(file);
+      });
+    }
+    function drawPhotos() {
+      $('mPhotos').innerHTML = formPhotos.map((p, i) => `<div class="relative"><img src="${esc(p)}" class="w-full h-20 object-cover rounded-lg"><button type="button" data-rm="${i}" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/70 text-white text-xs"><i class="fa-solid fa-xmark"></i></button></div>`).join('');
+    }
+    function setType(k) {
+      $('stopModal').dataset.type = k;
+      document.querySelectorAll('#mTypes [data-type]').forEach(b => {
+        const on = b.dataset.type === k, t = TYPES[b.dataset.type];
+        b.className = 'py-2 rounded-xl border-2 text-sm font-bold ' + (on ? `${t.b} text-white border-transparent` : 'border-slate-200 text-slate-600');
+      });
+    }
+    function openModal(s, day) {
+      if (!$('stopModal')) buildModal();
+      editingId = s ? s.id : null;
+      $('mTitle').innerText = s ? '編輯站點' : `新增站點（Day ${day}）`;
+      $('mDay').value = s ? s.day : day;
+      $('mTime').value = s ? s.time : '';
+      $('mName').value = s ? s.title : '';
+      $('mDesc').value = s ? s.desc : '';
+      $('mGoogle').value = s ? s.mapUrl || '' : '';
+      $('mNaver').value = s ? s.naverUrl || '' : '';
+      formPhotos = s ? [...(s.photos || [])] : [];
+      setType(s ? s.type : 'spot'); drawPhotos();
+      $('stopModal').classList.remove('hidden'); $('stopModal').classList.add('flex');
+    }
+    function closeModal() { $('stopModal').classList.add('hidden'); $('stopModal').classList.remove('flex'); }
+
+    async function saveStop() {
+      const title = $('mName').value.trim();
+      if (!title) { showToast('請輸入站點名稱', false); return; }
+      const g = $('mGoogle').value.trim(), nv = $('mNaver').value.trim();
+      if ((g && !safeUrl(g)) || (nv && !safeUrl(nv))) { showToast('地圖連結需以 https:// 開頭', false); return; }
+      if (formPhotos.join('').length > 850000) { showToast('照片總量太大，請減少張數', false); return; }
+      const day = +$('mDay').value, old = editingId && allStops().find(x => x.id === editingId);
+      const maxOrder = Math.max(0, ...allStops().filter(x => x.day === day && x.id !== editingId).map(x => x.order));
+      const data = {
+        day, type: $('stopModal').dataset.type, time: $('mTime').value.trim(), title, desc: $('mDesc').value.trim(),
+        mapUrl: g, naverUrl: nv, photos: formPhotos,
+        order: old && old.day === day ? old.order : maxOrder + 10, updatedAt: new Date().toISOString()
+      };
+      $('mSave').disabled = true;
+      try {
+        await ensureSeeded();
+        await setDoc(stopRef(editingId || 'n' + Date.now().toString(36)), data);
+        closeModal(); showToast('已儲存，所有裝置即時更新');
+      } catch (e) { stopError(e); }
+      $('mSave').disabled = false;
+    }
+
+    document.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-act]'); if (!b || !isEditing) return;
+      const act = b.dataset.act, id = b.dataset.id;
+      if (act === 'add') openModal(null, +b.dataset.day);
+      else if (act === 'edit') openModal(allStops().find(x => x.id === id));
+      else if (act === 'up') moveStop(id, -1);
+      else if (act === 'down') moveStop(id, 1);
+      else if (act === 'del' && confirm('確定要刪除這個站點嗎？')) {
+        try { await ensureSeeded(); await deleteDoc(stopRef(id)); showToast('已刪除'); } catch (err) { stopError(err); }
+      }
+    });
+
+    function setupStopsListener() {
+      onSnapshot(stopsCol(), snap => {
+        cloudStops = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderDays();
+      }, err => { console.error(err); showToast('行程載入失敗，顯示預設內容', false); });
+    }
+
     // ---------- 初始化 ----------
     function initFirebase() {
       loadSavedLocalContent();   // 先秒開本機快取
@@ -1212,6 +956,7 @@
         });
 
         setupRealtimeListener();   // 不需登入即可讀取
+        setupStopsListener();
       } catch (err) {
         console.error("Firebase 初始化異常:", err);
         updateCloudStatus('disconnected', '本機離線模式');
@@ -1220,6 +965,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      renderDays();
       bindChecklistEvents();
       initFirebase();
     });
